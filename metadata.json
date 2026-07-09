@@ -1,0 +1,6 @@
+{
+  "name": "Call Center Auditor",
+  "description": "API y panel para auditar llamadas de call center comparando con guión y tipificación usando inteligencia artificial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

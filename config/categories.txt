@@ -1,0 +1,19 @@
+- Interesado: Acepta la oferta o pide más información.
+- No Interesado: Rechaza la oferta.
+- Volver a llamar: Pide que se le llame en otro momento.
+- New Appt Scheduled: cita agendada
+- Follow-Up _ Post Sale: seguimiento pos-venta, solo se usa si ya es una cita y se debe hacer seguimiento o alguna otra nececidad de cliente
+- Appt Rescheduled: cita reprogramada, es para cuendo el cliente no fue atendido el dia y hora espesificados anteriormente y se debe reprogramar
+- Scheduled Call:llamada programada, esto casi no se usa
+- Call Back: cliente que pidio que se le llamara otro dia u hora espesifica
+- Hung Up: cliente que cuelga la llamda, solo se aplica cuando el cliente cuelga y no da tiempo de explicar el motivo de la llamada 
+- No Spanish: cliente no habla español
+- Voice Mail: llamada entro en buzon de voz
+- Not Interested: cliente que indica no estar interesado
+- Survey: encuesta
+- Wrong Number: numero equivocado, solo si el cliente dice no ser la persona a la quese le lamada y cuelga 
+- Empty Number: llamada vacia
+- No Qualify: cliente que dice ya ener todo nuevo en casa, venana, puerta contra impacto y techo nuevo
+- No Qualify: +80: cliente que dice tener mas de 80 años
+- No Qualify: APT: cliente que vive en apartamento
+- No Qualify: Not an owner: cliente que indica no ser el propietario de la casa 

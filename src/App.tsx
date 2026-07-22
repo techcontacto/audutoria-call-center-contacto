@@ -378,7 +378,9 @@ export default function App() {
               <div className="h-full min-h-[500px] flex flex-col items-center justify-center text-gray-400 bg-white border border-gray-200 rounded-xl border-dashed">
                 <Loader2 className="w-8 h-8 animate-spin mb-4 text-blue-500" />
                 <p className="text-sm font-medium text-gray-500">Evaluando llamadas...</p>
-                <p className="text-xs mt-2 text-gray-400 max-w-[250px] text-center">Esto tomará unos segundos para procesar todos los audios por lote.</p>
+                <p className="text-xs mt-2 text-gray-400 max-w-[300px] text-center">
+                  El procesamiento se realiza en lotes de 5 llamadas. Si has enviado más de 5, el sistema esperará 60 segundos antes de procesar el siguiente lote.
+                </p>
               </div>
             ) : results ? (
               <div className="space-y-6">

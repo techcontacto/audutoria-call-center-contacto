@@ -13,7 +13,7 @@
 - Survey: encuesta
 - Wrong Number: numero equivocado, solo si el cliente dice no ser la persona a la quese le lamada y cuelga 
 - Empty Number: llamada vacia
-- No Qualify: cliente que dice ya tener todo nuevo en casa, venana, puerta contra impacto y techo nuevo
+- No Qualify: cliente que dice ya ener todo nuevo en casa, venana, puerta contra impacto y techo nuevo
 - No Qualify: +80: cliente que dice tener mas de 80 años
 - No Qualify: APT: cliente que vive en apartamento
 - No Qualify: Not an owner: cliente que indica no ser el propietario de la casa 

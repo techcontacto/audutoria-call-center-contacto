@@ -110,36 +110,47 @@ async function startServer() {
       const files = req.files as Express.Multer.File[] || [];
       const ai = getAi();
 
-      const results = await Promise.all(items.map(async (item, index) => {
-        try {
-          if (!item.expectedCategory) {
-            throw new Error("Tipificación esperada es requerida.");
-          }
+      const results: any[] = [];
+      const batchSize = 5;
+      
+      for (let i = 0; i < items.length; i += batchSize) {
+        if (i > 0) {
+          // Wait 60 seconds before processing the next batch to avoid rate limits
+          console.log(`Waiting 60 seconds before processing batch ${Math.floor(i / batchSize) + 1}...`);
+          await new Promise(resolve => setTimeout(resolve, 60000));
+        }
 
-          let base64Audio = "";
-          let mimeType = "audio/mp3";
-          let sourceName = "";
-
-          if (item.type === "url") {
-            if (!item.url) throw new Error("URL de audio es requerida.");
-            base64Audio = await fetchAudioAsBase64(item.url);
-            sourceName = item.url;
-          } else if (item.type === "file") {
-            const fileIndex = item.fileIndex;
-            if (fileIndex === undefined || !files[fileIndex]) {
-               throw new Error("Archivo de audio no encontrado en la solicitud.");
+        const batch = items.slice(i, i + batchSize);
+        const batchResults = await Promise.all(batch.map(async (item) => {
+          try {
+            if (!item.expectedCategory) {
+              throw new Error("Tipificación esperada es requerida.");
             }
-            base64Audio = files[fileIndex].buffer.toString("base64");
-            mimeType = files[fileIndex].mimetype || "audio/mp3";
-            sourceName = files[fileIndex].originalname;
-          } else {
-            throw new Error("Tipo de item inválido. Debe ser 'url' o 'file'.");
-          }
 
-          // Agregamos el nombre original al item para uso en el frontend
-          item.sourceName = sourceName;
+            let base64Audio = "";
+            let mimeType = "audio/mp3";
+            let sourceName = "";
 
-          const prompt = `Eres un auditor experto en calidad (QA) de call centers.
+            if (item.type === "url") {
+              if (!item.url) throw new Error("URL de audio es requerida.");
+              base64Audio = await fetchAudioAsBase64(item.url);
+              sourceName = item.url;
+            } else if (item.type === "file") {
+              const fileIndex = item.fileIndex;
+              if (fileIndex === undefined || !files[fileIndex]) {
+                 throw new Error("Archivo de audio no encontrado en la solicitud.");
+              }
+              base64Audio = files[fileIndex].buffer.toString("base64");
+              mimeType = files[fileIndex].mimetype || "audio/mp3";
+              sourceName = files[fileIndex].originalname;
+            } else {
+              throw new Error("Tipo de item inválido. Debe ser 'url' o 'file'.");
+            }
+
+            // Agregamos el nombre original al item para uso en el frontend
+            item.sourceName = sourceName;
+
+            const prompt = `Eres un auditor experto en calidad (QA) de call centers.
 1. GUIÓN GENERAL:
 """${config.script}"""
 
@@ -169,39 +180,42 @@ Evalúa el desempeño y devuelve un objeto JSON muy corto y directo con esta est
 
 Devuelve SOLO el objeto JSON. TODAS LAS RESPUESTAS EN ESPAÑOL.`;
 
-          const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: [
-              {
-                role: "user",
-                parts: [
-                  {
-                    inlineData: {
-                      mimeType: mimeType,
-                      data: base64Audio
-                    }
-                  },
-                  { text: prompt }
-                ]
+            const response = await ai.models.generateContent({
+              model: "gemini-2.5-flash",
+              contents: [
+                {
+                  role: "user",
+                  parts: [
+                    {
+                      inlineData: {
+                        mimeType: mimeType,
+                        data: base64Audio
+                      }
+                    },
+                    { text: prompt }
+                  ]
+                }
+              ],
+              config: {
+                responseMimeType: "application/json",
+                temperature: 0.1,
               }
-            ],
-            config: {
-              responseMimeType: "application/json",
-              temperature: 0.1,
-            }
-          });
+            });
 
-          let reportText = response.text;
-          if (!reportText) throw new Error("Respuesta vacía del modelo");
-          
-          reportText = reportText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-          const report = JSON.parse(reportText);
+            let reportText = response.text;
+            if (!reportText) throw new Error("Respuesta vacía del modelo");
+            
+            reportText = reportText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+            const report = JSON.parse(reportText);
 
-          return { success: true, item, report };
-        } catch (err: any) {
-           return { success: false, item, error: err.message };
-        }
-      }));
+            return { success: true, item, report };
+          } catch (err: any) {
+             return { success: false, item, error: err.message };
+          }
+        }));
+        
+        results.push(...batchResults);
+      }
 
       const validResults = results.filter(r => r.success && r.report);
       let generalSummary = "";

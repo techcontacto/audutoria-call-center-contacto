@@ -181,7 +181,7 @@ Evalúa el desempeño y devuelve un objeto JSON muy corto y directo con esta est
 Devuelve SOLO el objeto JSON. TODAS LAS RESPUESTAS EN ESPAÑOL.`;
 
             const response = await ai.models.generateContent({
-              model: "gemini-2.5-flash",
+              model: "gemini-3.1-flash-lite",
               contents: [
                 {
                   role: "user",
@@ -230,7 +230,7 @@ Devuelve tu respuesta en texto plano (sin markdown ni JSON).`;
 
         try {
           const summaryResponse = await ai.models.generateContent({
-              model: "gemini-2.5-flash",
+              model: "gemini-3.1-flash-lite",
               contents: summaryPrompt,
           });
           generalSummary = summaryResponse.text || "No se pudo generar el resumen general.";

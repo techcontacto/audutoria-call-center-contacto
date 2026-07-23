@@ -64,7 +64,7 @@ Eres un sistema de control de calidad automatizado. Tu objetivo es analizar la t
 - Requisitos en audio: Frases como "Acabo de cambiar el techo", "Mis ventanas son nuevas contra impacto", "Ya lo tengo todo nuevo".
 
 [No Qualify: +80]
-- Definición: El cliente menciona explícitamente tener más de 80 años de edad, quedando fuera del perfil requerido.
+- Definición: El cliente menciona explícitamente tener más de 80 años de edad, quedando fuera del perfil requerido. aunque el cliente diga que si quiere la cita,si el operador agendo pero al final dice el cliente ser mayor de 80, si no hay alguien de menos de 80 en la casa que pueda resivir la visita. 
 - Requisitos en audio: Frases como "Tengo 82 años", "Ya estoy muy viejo, tengo más de 80".
 
 [No Qualify: APT]

@@ -82,9 +82,19 @@ PROCESAMIENTO INTERNO DE TIPIFICACIÓN - REGLAS DE OBLIGACIÓN Y PROHIBICIÓN:
 
 Debes evaluar la llamada siguiendo este estricto orden. Tienes prohibido saltarte las reglas de descarte.
 
-PASO 1: ¿EL LLAMANTE ES UN FAMILIAR? [REGLA MAESTRA DE ANULACIÓN]
-- Si en la llamada contesta un familiar del dueño (ej: la hija, el hijo, la esposa) diciendo que el propietario no está o pidiendo que llamen en otro momento, queda ESTRICTAMENTE PROHIBIDO usar la tipificación [Not an owner] o [Wrong Number]. 
-- Un familiar NO es un inquilino. Por lo tanto, ignora el hecho de que "no sea el dueño directo" y avanza de inmediato al PASO 2.
+PASO 1: FILTROS DE PERFIL DE LA PROPIEDAD (NO QUALIFY) - ¡PRIORIDAD ABSOLUTA DE ANULACIÓN!
+
+Antes de evaluar si el agente fue amable, si completó el guion o si la llamada parece exitosa, DEBES revisar estos filtros. Si uno se cumple, la llamada queda ANULADA de cualquier categoría positiva (Prohibido usar 'New Appt Scheduled').
+
+*   ¿El cliente manifiesta explícitamente que ya tiene la casa remodelada, arreglada, o que TODO ES NUEVO (mencione techo, ventanas, puertas, cocina, etc.)?
+    - SÍ: Detén el análisis de inmediato y marca obligatoriamente: [No Qualify].
+    - ⚠️ REGLA ANTI-FALLO DE CITA: No importa si el agente valida la dirección o si la llamada termina de forma muy amigable. Si el cliente dice "ya tengo todo nuevo" o "ya renovamos completa la casa", NO EXISTE CITA POSIBLE. La tipificación correcta SIEMPRE es [No Qualify].
+
+*   ¿El cliente manifestó explícitamente que RENTA, ALQUILA o es INQUILINO de la propiedad?
+    - SÍ: Detén el análisis y marca: [No Qualify: Not an owner]. (Prohibido usar Wrong Number. Si es un familiar como la hija que dice "él no está", pasa de largo al paso de Hung Up).
+
+*   ¿Se mencionó que el propietario tiene más de 80 años de edad?
+    - SÍ: Si no hay un familiar menor a cargo de las finanzas en la casa, detén el análisis y marca: [No Qualify: +80].
 
 PASO 2: COMPROMISO DE TIEMPO (ANTI-FALLO CALL BACK)
 - ¿El familiar o cliente propuso o aceptó una HORA EXACTA con números en el reloj (ej: "a las 4:00") o una FECHA concreta para recibir la llamada?

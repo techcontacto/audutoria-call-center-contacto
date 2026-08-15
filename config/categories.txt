@@ -98,6 +98,12 @@ PASO 3: DETECCIÓN DE ACCIÓN FINAL (LA REGLA DEL DESCARTE)
 PASO 4: REGLA EXCLUSIVA PARA 'NOT AN OWNER'
 - SOLO utilizarás la etiqueta [No Qualify: Not an owner] si el cliente dice explícitamente las palabras: "Rento", "Alquilo", "Soy inquilino" o "La casa es de un Landlord/Casero". Si no se mencionan estas palabras de arrendamiento, no puedes usar esta etiqueta.
 
+PASO EXTRA: SOLICITUD DE REMOCIÓN O NO LLAMAR [REGLA DNC]
+- ¿El cliente solicitó explícitamente ser removido de la base de datos, pidió que lo saquen de la lista, o exigió que no lo vuelvan a marcar nunca más (ej: "No me llamen más", "Quítenme de su lista")?
+  * SÍ: Detén el análisis de inmediato y marca obligatoriamente: [DNC This Number].
+  * Justificación para la IA: Si el cliente pide no ser contactado de nuevo, esta instrucción anula las etiquetas de 'Not Interested' o 'Hung Up'. El sistema debe proteger la base de datos asignando la tipificación de exclusión [DNC This Number].
+
+
 
 📄 REGLA DE SALIDA PARA LA API Responde ÚNICAMENTE con el siguiente formato JSON limpio, sin texto adicional fuera de él:
 {

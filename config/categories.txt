@@ -44,7 +44,7 @@ Antes de evaluar si el agente fue amable, si agendó una cita, si validó datos,
 [Scheduled Call]
 - Definición: Programar una llamada telefónica para otro día (uso poco frecuente).
 
-[Call Back]
+
 [Call Back] - CRITERIO DE COMPROMISO TEMPORAL OBLIGATORIO:
 - Esta etiqueta SOLO es correcta si el cliente propone o acepta explícitamente una hora exacta, un bloque de tiempo específico (ej. "marqueme a las 4 de la tarde", "llámeme mañana en la mañana") para recibir la llamada de vuelta.
 - REGLA DE EXCLUSIÓN CRÍTICA POR EVASIÓN: Si el cliente o un familiar dice frases sueltas como "llame después", "llame luego", "ahora no puedo" o "marque en otro momento" SIN definir una hora o un momento claro, esto NO es un Call Back. Es simplemente una frase de evasión para terminar la llamada.

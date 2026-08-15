@@ -47,8 +47,9 @@ Antes de evaluar si el agente fue amable, si agendó una cita, si validó datos,
 [Call Back]
 - Definición: El cliente indica estar ocupado y pide explícitamente que le marquen en otro momento u hora específica.
 
-[Hung Up]
-- Definición: El cliente cuelga de forma abrupta antes de cumplir los primeros 30 segundos o antes de que el agente explique el motivo de la llamada.
+[Hung Up] - REGLA DE PRIORIDAD ABSOLUTA POR CORTE:
+- Si el cliente finaliza la llamada cortando la comunicación, interrumpiendo abruptamente el cierre del agente o colgando tras manifestar un malentendido (por ejemplo: "se equivocó de número", "no soy yo" o "no me interesa" y acto seguido cuelga sin permitir un cierre formal), la tipificación CORRECTA es obligatoriamente [Hung Up].
+- La acción física de colgar la llamada ANULA el contenido o motivo previo de la conversación. No importa si el cliente mencionó que era un número equivocado; si la llamada termina porque el cliente colgó de golpe, la etiqueta es [Hung Up] y NUNCA [Wrong Number].
 
 [Voice Mail]
 - Definición: Contesta la grabadora o buzón de voz. No requiere evaluar guion.

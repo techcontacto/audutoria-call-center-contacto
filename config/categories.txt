@@ -104,9 +104,10 @@ PASO 2: ¿SE ACORDÓ UN REGRESO DE LLAMADA REAL? [REGLA ANTI-FALLO DE CALL BACK]
   * NO (Solo dijo frases de cortesía o evasión para colgar como "llame después", "llame luego", "ahora no", "estamos ocupados" SIN dar una hora exacta): Prohibido usar Call Back. Pasa al PASO 3.
 
 PASO 3: ¿CÓMO FINALIZÓ LA LLAMADA AL NO HABER INTERÉS NI COMPROMISO?
-- Si la llamada terminó porque el cliente simplemente se retiró, cortó la comunicación, colgó de golpe tras dar una excusa, o el agente tuvo que cerrar la llamada porque lo evadieron -> Clasifica según el desenlace físico:
-  * Si hubo un corte de línea o el cliente colgó para no seguir hablando -> Marca obligatoriamente: [Hung Up].
-  * Si el cliente rechazó el servicio formalmente y se despidió sin colgar abruptamente -> Marca: [Not Interested].
+- Si la llamada terminó porque el cliente se retiró, cortó la comunicación o colgó tras dar una excusa (sin importar si lo hizo de forma grosera o de forma totalmente "cordial" diciendo "adiós" o "gracias"), evalúa lo siguiente:
+  * REGLA DE ANULACIÓN PARA 'NOT INTERESTED': Solo usarás [Not Interested] si el cliente escuchó TODA la propuesta, rechazó el servicio formalmente y el agente pudo hacer un cierre completo del guion con una despedida natural de ambas partes.
+  * REGLA CORRECTA PARA ESTE CASO: Si el cliente simplemente colgó el teléfono o cortó la llamada para no seguir hablando (aunque haya sido educado al despedirse), el proceso quedó inconcluso. Por lo tanto, la tipificación CORRECTA y obligatoria es: [Hung Up].
+
 
 PASO 4: ¿ES NÚMERO EQUIVOCADO REAL?
 - ¿El prospecto aclaró que llamaron a una EMPRESA/NEGOCIO, o que la persona buscada no vive ni tiene relación alguna con ese teléfono? -> Marca: [Wrong Number].

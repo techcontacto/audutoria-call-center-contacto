@@ -75,42 +75,16 @@ Regla de exclusión: No confundir con el inquilino que dice "no soy dueño". Si 
 
 ---
 
-## ⚙️ INSTRUCCIONES DE PROCESAMIENTO INTERNO PARA LA IA (PASO A PASO)
-Para analizar la transcripción, debes seguir estos pasos mentalmente antes de generar el JSON:
-1. Analiza el final y el desarrollo de la llamada buscando edades o años de nacimiento de los propietarios. Si descubres que tienen más de 80 años (ej. nacido en 1939), detén el análisis y marca la llamada como [No Qualify: +80].
-2. Si no hay datos de edad, revisa si es apartamento, si no es dueño o si tiene todo nuevo.
-3. Solo si la llamada no cumple con ningún "No Qualify", procede a validar si el agente logró agendar una cita o si fue un rechazo común.
+⚙️ INSTRUCCIONES DE PROCESAMIENTO INTERNO PARA LA IA (ALGORITMO SECUENCIAL)Para analizar la transcripción y determinar la tipificación correcta, debes evaluar las siguientes preguntas en orden estricto de arriba hacia abajo. En el momento en que una condición sea verdadera (SÍ), detén el análisis inmediatamente y asigna esa etiqueta.PASO 1: FILTROS DE PERFIL DE LA PROPIEDAD (NO QUALIFY)¿El cliente manifestó explícitamente que NO es dueño, o que renta/alquila la propiedad?SÍ: Detén el análisis y marca obligatoriamente: [No Qualify: Not an owner]. (Está estrictamente prohibido usar Wrong Number en este caso).¿Se mencionó que el propietario tiene más de 80 años de edad (o nació en 1946 o antes)?SÍ: Revisa si en la llamada hay constancia explícita de que viva otra persona menor de 80 años con algún parentesco o a cargo de las finanzas que asuma la total responsabilidad de recibir al asesor. Si NO existe ese familiar menor, detén el análisis y marca obligatoriamente: [No Qualify: +80].PASO 2: CONTROL DE CIERRE Y CORTE DE LLAMADA¿El cliente simplemente colgó el teléfono, cortó la comunicación o se retiró para no seguir hablando?SÍ: Sin importar si lo hizo de forma molesta o de forma totalmente "cordial" (diciendo "adiós", "gracias" o usando una excusa antes de cortar), si la llamada finalizó dejando el proceso inconcluso, detén el análisis y marca obligatoriamente: [Hung Up].PASO 3: COMPROMISO DE CONTACTO TELEFÓNICO (ANTI-FALLO CALL BACK)¿El cliente o familiar propuso o aceptó una HORA EXACTA, MOMENTO ESPECÍFICO DEL DÍA (ej: "a las 3", "mañana en la mañana") o FECHA concreta para recibir la llamada de vuelta?SÍ: Marca: [Call Back].NO: (Solo usó frases de cortesía o evasión para zafarse del agente como "llame después", "llame luego", "ahora no", "estamos ocupados" SIN dar una hora exacta): Está prohibido usar Call Back. Avanza al siguiente paso.PASO 4: RECHAZO FORMAL O NÚMERO EQUIVOCADO¿El cliente escuchó TODA la propuesta, rechazó el servicio formalmente y el agente pudo hacer un cierre completo del guion con una despedida natural de ambas partes?SÍ: Marca: [Not Interested].¿El prospecto aclaró explícitamente que llamaron a una EMPRESA / NEGOCIO, o que la persona buscada no tiene relación alguna con ese número de teléfono?SÍ: Marca: [Wrong Number].
 
-## REGLA DE SALIDA PARA LA API:
-Responde ÚNICAMENTE con el siguiente formato JSON limpio, sin texto adicional fuera de él:
+📄 REGLA DE SALIDA PARA LA API Responde ÚNICAMENTE con el siguiente formato JSON limpio, sin texto adicional fuera de él:
 {
-  "pensamiento_paso_a_paso": "[Escribe aquí el análisis de perfil que hiciste: ¿Hay marcas de edad? ¿Hay marcas de dueño? ¿Hay cita?]",
-  "tipificacion_agente": "[Nombre exacto seleccionado por el agente]",
+  "pensamiento_paso_a_paso": "[Escribe aquí el análisis secuencial que hiciste paso por paso: ¿Había marcas de edad? ¿Quién atendió? ¿Se definió hora de llamada? ¿Hubo corte de línea?]",
+  "tipificacion_agente": "[Nombre exacto seleccionado por el agente u operador]",
   "es_correcta": false,
-  "tipificacion_sugerida_api": "[Debe ser uno de los nombres exactos entre corchetes, ej: No Qualify: +80]",
-  "justificacion": "[Explica detalladamente por qué se anula o se aprueba la tipificación basándote en la regla de cortocircuito]"
-Paso 1 (Corte): ¿El cliente colgó abruptamente la llamada? Si sí, clasifica como [Hung Up] y finaliza el análisis.Paso 2 (Propiedad): ¿El cliente dijo que no es dueño o que renta? Si sí, clasifica como [No Qualify: Not an owner]. (No uses Wrong Number aquí).Paso 3 (Edad): ¿Tienen más de 80 años? Si sí, clasifica como [No Qualify: +80] A menos que alguien mas pueda resibir la cita si es menor a 80 años y tiene algun parentesco con el familiar o esta a cargo de las finanzas .Paso 4 (Empresa): ¿El cliente aclara que llamaron a una empresa o negocio? Si sí, clasifica como [Wrong Number].
-PROCESAMIENTO INTERNO DE TIPIFICACIÓN - EVALUACIÓN DE ARRIBA HACIA ABAJO:
-
-Para determinar la tipificación correcta, debes evaluar las siguientes preguntas en orden estricto. En el momento en que una respuesta sea SÍ, detén el análisis y asigna esa etiqueta.
-
-PASO 1: ¿EL CLIENTE NO CALIFICA POR PERFIL?
-- Si manifiesta explícitamente que NO es dueño o que renta/alquila -> Detén el análisis y marca obligatoriamente: [No Qualify: Not an owner]. (Prohibido usar Wrong Number en este caso).
-- Si menciona tener más de 80 años -> Detén el análisis y marca obligatoriamente: [No Qualify: +80].
-
-PASO 2: ¿SE ACORDÓ UN REGRESO DE LLAMADA REAL? [REGLA ANTI-FALLO DE CALL BACK]
-- ¿El cliente o familiar propuso o aceptó una HORA EXACTA, MOMENTO DEL DÍA ESPECÍFICO (ej: "a las 3", "mañana en la mañana") o FECHA concreta para que le vuelvan a marcar? 
-  * SÍ: Marca [Call Back].
-  * NO (Solo dijo frases de cortesía o evasión para colgar como "llame después", "llame luego", "ahora no", "estamos ocupados" SIN dar una hora exacta): Prohibido usar Call Back. Pasa al PASO 3.
-
-PASO 3: ¿CÓMO FINALIZÓ LA LLAMADA AL NO HABER INTERÉS NI COMPROMISO?
-- Si la llamada terminó porque el cliente se retiró, cortó la comunicación o colgó tras dar una excusa (sin importar si lo hizo de forma grosera o de forma totalmente "cordial" diciendo "adiós" o "gracias"), evalúa lo siguiente:
-  * REGLA DE ANULACIÓN PARA 'NOT INTERESTED': Solo usarás [Not Interested] si el cliente escuchó TODA la propuesta, rechazó el servicio formalmente y el agente pudo hacer un cierre completo del guion con una despedida natural de ambas partes.
-  * REGLA CORRECTA PARA ESTE CASO: Si el cliente simplemente colgó el teléfono o cortó la llamada para no seguir hablando (aunque haya sido educado al despedirse), el proceso quedó inconcluso. Por lo tanto, la tipificación CORRECTA y obligatoria es: [Hung Up].
-
-
-PASO 4: ¿ES NÚMERO EQUIVOCADO REAL?
-- ¿El prospecto aclaró que llamaron a una EMPRESA/NEGOCIO, o que la persona buscada no vive ni tiene relación alguna con ese teléfono? -> Marca: [Wrong Number].
+  "tipificacion_sugerida_api": "[Debe ser el nombre exacto de la etiqueta correcta seleccionada tras el descarte, ej: Hung Up]",
+  "justificacion": "[Explica detalladamente por qué se anula la tipificación del agente o por qué se aprueba basándote estrictamente en el algoritmo secuencial]"
+}
 
 }
 

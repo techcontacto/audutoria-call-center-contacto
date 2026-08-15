@@ -45,7 +45,11 @@ Antes de evaluar si el agente fue amable, si agendó una cita, si validó datos,
 - Definición: Programar una llamada telefónica para otro día (uso poco frecuente).
 
 [Call Back]
-- Definición: El cliente indica estar ocupado y pide explícitamente que le marquen en otro momento u hora específica.
+[Call Back] - CRITERIO DE COMPROMISO TEMPORAL OBLIGATORIO:
+- Esta etiqueta SOLO es correcta si el cliente propone o acepta explícitamente una hora exacta, un bloque de tiempo específico (ej. "marqueme a las 4 de la tarde", "llámeme mañana en la mañana") para recibir la llamada de vuelta.
+- REGLA DE EXCLUSIÓN CRÍTICA POR EVASIÓN: Si el cliente o un familiar dice frases sueltas como "llame después", "llame luego", "ahora no puedo" o "marque en otro momento" SIN definir una hora o un momento claro, esto NO es un Call Back. Es simplemente una frase de evasión para terminar la llamada.
+- REGLA DE TERCEROS (NO DUEÑO): Si quien atiende es un familiar indirecto (ej. la hija de la esposa del dueño) que no tiene poder de decisión sobre la propiedad, y solo dice "llame luego", la llamada se debe tipificar según cómo termine la comunicación (como Hung Up si corta, o Not Interested si declina de forma general), pero NUNCA como Call Back a menos que ella fije una cita telefónica real para el dueño.
+
 
 [Hung Up] - REGLA DE PRIORIDAD ABSOLUTA POR CORTE:
 - Si el cliente finaliza la llamada cortando la comunicación, interrumpiendo abruptamente el cierre del agente o colgando tras manifestar un malentendido (por ejemplo: "se equivocó de número", "no soy yo" o "no me interesa" y acto seguido cuelga sin permitir un cierre formal), la tipificación CORRECTA es obligatoriamente [Hung Up].

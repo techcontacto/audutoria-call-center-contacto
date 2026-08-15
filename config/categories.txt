@@ -90,5 +90,26 @@ Responde ÚNICAMENTE con el siguiente formato JSON limpio, sin texto adicional f
   "tipificacion_sugerida_api": "[Debe ser uno de los nombres exactos entre corchetes, ej: No Qualify: +80]",
   "justificacion": "[Explica detalladamente por qué se anula o se aprueba la tipificación basándote en la regla de cortocircuito]"
 Paso 1 (Corte): ¿El cliente colgó abruptamente la llamada? Si sí, clasifica como [Hung Up] y finaliza el análisis.Paso 2 (Propiedad): ¿El cliente dijo que no es dueño o que renta? Si sí, clasifica como [No Qualify: Not an owner]. (No uses Wrong Number aquí).Paso 3 (Edad): ¿Tienen más de 80 años? Si sí, clasifica como [No Qualify: +80] A menos que alguien mas pueda resibir la cita si es menor a 80 años y tiene algun parentesco con el familiar o esta a cargo de las finanzas .Paso 4 (Empresa): ¿El cliente aclara que llamaron a una empresa o negocio? Si sí, clasifica como [Wrong Number].
+PROCESAMIENTO INTERNO DE TIPIFICACIÓN - EVALUACIÓN DE ARRIBA HACIA ABAJO:
+
+Para determinar la tipificación correcta, debes evaluar las siguientes preguntas en orden estricto. En el momento en que una respuesta sea SÍ, detén el análisis y asigna esa etiqueta.
+
+PASO 1: ¿EL CLIENTE NO CALIFICA POR PERFIL?
+- Si manifiesta explícitamente que NO es dueño o que renta/alquila -> Detén el análisis y marca obligatoriamente: [No Qualify: Not an owner]. (Prohibido usar Wrong Number en este caso).
+- Si menciona tener más de 80 años -> Detén el análisis y marca obligatoriamente: [No Qualify: +80].
+
+PASO 2: ¿SE ACORDÓ UN REGRESO DE LLAMADA REAL? [REGLA ANTI-FALLO DE CALL BACK]
+- ¿El cliente o familiar propuso o aceptó una HORA EXACTA, MOMENTO DEL DÍA ESPECÍFICO (ej: "a las 3", "mañana en la mañana") o FECHA concreta para que le vuelvan a marcar? 
+  * SÍ: Marca [Call Back].
+  * NO (Solo dijo frases de cortesía o evasión para colgar como "llame después", "llame luego", "ahora no", "estamos ocupados" SIN dar una hora exacta): Prohibido usar Call Back. Pasa al PASO 3.
+
+PASO 3: ¿CÓMO FINALIZÓ LA LLAMADA AL NO HABER INTERÉS NI COMPROMISO?
+- Si la llamada terminó porque el cliente simplemente se retiró, cortó la comunicación, colgó de golpe tras dar una excusa, o el agente tuvo que cerrar la llamada porque lo evadieron -> Clasifica según el desenlace físico:
+  * Si hubo un corte de línea o el cliente colgó para no seguir hablando -> Marca obligatoriamente: [Hung Up].
+  * Si el cliente rechazó el servicio formalmente y se despidió sin colgar abruptamente -> Marca: [Not Interested].
+
+PASO 4: ¿ES NÚMERO EQUIVOCADO REAL?
+- ¿El prospecto aclaró que llamaron a una EMPRESA/NEGOCIO, o que la persona buscada no vive ni tiene relación alguna con ese teléfono? -> Marca: [Wrong Number].
+
 }
 

@@ -77,8 +77,19 @@ Regla de exclusión: No confundir con el inquilino que dice "no soy dueño". Si 
 
 ⚙️ INSTRUCCIONES DE PROCESAMIENTO INTERNO PARA LA IA (ALGORITMO SECUENCIAL)
 Para analizar la transcripción y determinar la tipificación correcta, debes evaluar las siguientes preguntas en orden estricto de arriba hacia abajo. En el momento en que una condición sea verdadera (SÍ), detén el análisis inmediatamente y asigna esa etiqueta.
-PASO 1: FILTROS DE PERFIL DE LA PROPIEDAD (NO QUALIFY)¿El cliente manifestó explícitamente que NO es dueño, o que renta/alquila la propiedad?SÍ: Detén el análisis y marca obligatoriamente: [No Qualify: Not an owner]. (Está estrictamente prohibido usar Wrong Number en este caso).¿Se mencionó que el propietario tiene más de 80 años de edad (o nació en 1946 o antes)?SÍ: Revisa si en la llamada hay constancia explícita de que viva otra persona menor de 80 años con algún parentesco o a cargo de las finanzas que asuma la total responsabilidad de recibir al asesor. Si NO existe ese familiar menor, detén el análisis y marca obligatoriamente: [No Qualify: +80].
-PASO 2: CONTROL DE CIERRE Y CORTE DE LLAMADA¿El cliente simplemente colgó el teléfono, cortó la comunicación o se retiró para no seguir hablando?SÍ: Sin importar si lo hizo de forma molesta o de forma totalmente "cordial" (diciendo "adiós", "gracias" o usando una excusa antes de cortar), si la llamada finalizó dejando el proceso inconcluso, detén el análisis y marca obligatoriamente: [Hung Up].
+
+PASO 1: FILTROS DE PERFIL DE LA PROPIEDAD (NO QUALIFY)
+*   ¿El cliente manifestó explícitamente que RENTA, ALQUILA o es INQUILINO de la propiedad?
+    - SÍ: Detén el análisis y marca: [No Qualify: Not an owner].
+    - ⚠️ REGLA DE EXCLUSIÓN CRÍTICA PARA FAMILIARES: Si quien atiende la llamada es un familiar directo o indirecto del dueño (ej: la hija, la esposa, el hijo) y dice frases como "él no está", "yo soy la hija" o "llame a mi esposo después", esto NO califica como 'Not an owner'. No detengas el análisis aquí. Pasa de largo al PASO 2.
+*   ¿Se mencionó que el propietario tiene más de 80 años de edad?
+    - SÍ: Si no hay un familiar menor a cargo, marca: [No Qualify: +80].
+
+PASO 2: CONTROL DE CIERRE Y CORTE DE LLAMADA (REGLA MAESTRA DE ACCIÓN FINAL)
+*   ¿La llamada terminó porque el cliente/familiar cortó la comunicación, colgó el teléfono, o pidió que llamaran después SIN dejar una hora exacta en el reloj?
+    - SÍ: Sin importar si la despedida fue molesta o totalmente "cordial" (diciendo "adiós" o "gracias"), si el proceso quedó inconcluso y se cortó la línea, la tipificación CORRECTA y obligatoria es: [Hung Up].
+    - ⚠️ EXPLICACIÓN COMPLEMENTARIA PARA LA IA: En este centro de contacto NO existe la etiqueta "llamar luego" o "contacto parcial informal". Cualquier llamada donde un familiar o cliente diga "llame después" pero no fije una cita con hora exacta en el reloj, se debe tipificar obligatoriamente como [Hung Up] debido a que la comunicación se interrumpió antes de cerrar la gestión.
+
 PASO 3: COMPROMISO DE CONTACTO TELEFÓNICO (ANTI-FALLO CALL BACK)
 - Esta etiqueta SOLO Y ÚNICAMENTE se puede asignar si en la llamada se pactó un dato numérico o temporal exacto. Debe existir constancia en la transcripción de una HORA FIJA (ej: "a las 2:00", "en una hora"), un BLOQUE HORARIO CLARO (ej: "mañana en la mañana") o una FECHA ESPECÍFICA.
 - REGLA DE ANULACIÓN POR INFORMALIDAD: Si el cliente o el familiar acepta recibir información en el futuro o dice frases abiertas como "está bien, llámenos luego", "vuelva a intentar después" o "hagan el seguimiento", pero NO se establece una hora o día exacto en el reloj para marcar, esto NO es un Call Back. Es un intento inconcluso de contacto.

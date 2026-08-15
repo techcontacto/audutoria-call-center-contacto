@@ -78,24 +78,26 @@ Regla de exclusión: No confundir con el inquilino que dice "no soy dueño". Si 
 ⚙️ INSTRUCCIONES DE PROCESAMIENTO INTERNO PARA LA IA (ALGORITMO SECUENCIAL)
 Para analizar la transcripción y determinar la tipificación correcta, debes evaluar las siguientes preguntas en orden estricto de arriba hacia abajo. En el momento en que una condición sea verdadera (SÍ), detén el análisis inmediatamente y asigna esa etiqueta.
 
-PASO 1: FILTROS DE PERFIL DE LA PROPIEDAD (NO QUALIFY)
-*   ¿El cliente manifestó explícitamente que RENTA, ALQUILA o es INQUILINO de la propiedad?
-    - SÍ: Detén el análisis y marca: [No Qualify: Not an owner].
-    - ⚠️ REGLA DE EXCLUSIÓN CRÍTICA PARA FAMILIARES: Si quien atiende la llamada es un familiar directo o indirecto del dueño (ej: la hija, la esposa, el hijo) y dice frases como "él no está", "yo soy la hija" o "llame a mi esposo después", esto NO califica como 'Not an owner'. No detengas el análisis aquí. Pasa de largo al PASO 2.
-*   ¿Se mencionó que el propietario tiene más de 80 años de edad?
-    - SÍ: Si no hay un familiar menor a cargo, marca: [No Qualify: +80].
+PROCESAMIENTO INTERNO DE TIPIFICACIÓN - REGLAS DE OBLIGACIÓN Y PROHIBICIÓN:
 
-PASO 2: CONTROL DE CIERRE Y CORTE DE LLAMADA (REGLA MAESTRA DE ACCIÓN FINAL)
-*   ¿La llamada terminó porque el cliente/familiar cortó la comunicación, colgó el teléfono, o pidió que llamaran después SIN dejar una hora exacta en el reloj?
-    - SÍ: Sin importar si la despedida fue molesta o totalmente "cordial" (diciendo "adiós" o "gracias"), si el proceso quedó inconcluso y se cortó la línea, la tipificación CORRECTA y obligatoria es: [Hung Up].
-    - ⚠️ EXPLICACIÓN COMPLEMENTARIA PARA LA IA: En este centro de contacto NO existe la etiqueta "llamar luego" o "contacto parcial informal". Cualquier llamada donde un familiar o cliente diga "llame después" pero no fije una cita con hora exacta en el reloj, se debe tipificar obligatoriamente como [Hung Up] debido a que la comunicación se interrumpió antes de cerrar la gestión.
+Debes evaluar la llamada siguiendo este estricto orden. Tienes prohibido saltarte las reglas de descarte.
 
-PASO 3: COMPROMISO DE CONTACTO TELEFÓNICO (ANTI-FALLO CALL BACK)
-- Esta etiqueta SOLO Y ÚNICAMENTE se puede asignar si en la llamada se pactó un dato numérico o temporal exacto. Debe existir constancia en la transcripción de una HORA FIJA (ej: "a las 2:00", "en una hora"), un BLOQUE HORARIO CLARO (ej: "mañana en la mañana") o una FECHA ESPECÍFICA.
-- REGLA DE ANULACIÓN POR INFORMALIDAD: Si el cliente o el familiar acepta recibir información en el futuro o dice frases abiertas como "está bien, llámenos luego", "vuelva a intentar después" o "hagan el seguimiento", pero NO se establece una hora o día exacto en el reloj para marcar, esto NO es un Call Back. Es un intento inconcluso de contacto.
-- Al no haber un compromiso de hora/fecha real, la llamada se clasifica según cómo terminó la línea de teléfono de forma física: si la llamada se cortó o se colgó dejando la gestión a medias, debes marcar obligatoriamente: [Hung Up].
+PASO 1: ¿EL LLAMANTE ES UN FAMILIAR? [REGLA MAESTRA DE ANULACIÓN]
+- Si en la llamada contesta un familiar del dueño (ej: la hija, el hijo, la esposa) diciendo que el propietario no está o pidiendo que llamen en otro momento, queda ESTRICTAMENTE PROHIBIDO usar la tipificación [Not an owner] o [Wrong Number]. 
+- Un familiar NO es un inquilino. Por lo tanto, ignora el hecho de que "no sea el dueño directo" y avanza de inmediato al PASO 2.
 
-PASO 4: RECHAZO FORMAL O NÚMERO EQUIVOCADO¿El cliente escuchó TODA la propuesta, rechazó el servicio formalmente y el agente pudo hacer un cierre completo del guion con una despedida natural de ambas partes?SÍ: Marca: [Not Interested].¿El prospecto aclaró explícitamente que llamaron a una EMPRESA / NEGOCIO, o que la persona buscada no tiene relación alguna con ese número de teléfono?SÍ: Marca: [Wrong Number].
+PASO 2: COMPROMISO DE TIEMPO (ANTI-FALLO CALL BACK)
+- ¿El familiar o cliente propuso o aceptó una HORA EXACTA con números en el reloj (ej: "a las 4:00") o una FECHA concreta para recibir la llamada?
+  * SÍ: Marca [Call Back].
+  * NO (Solo dijo de forma amable o evasiva "llame después", "llame luego", "vuelva a intentar"): Está PROHIBIDO usar Call Back. Avanza al PASO 3.
+
+PASO 3: DETECCIÓN DE ACCIÓN FINAL (LA REGLA DEL DESCARTE)
+- Si la llamada terminó porque el familiar o cliente pidió que llamaran luego (sin dar hora) y la comunicación se cortó o se colgó el teléfono, la tipificación CORRECTA y OBLIGATORIA es: [Hung Up].
+- Justificación para la IA: En este sistema no existe la etiqueta "llamar luego". Toda llamada que quede a medias porque el interlocutor corta la conversación o cuelga (así sea de manera educada o cordial) se clasifica como [Hung Up].
+
+PASO 4: REGLA EXCLUSIVA PARA 'NOT AN OWNER'
+- SOLO utilizarás la etiqueta [No Qualify: Not an owner] si el cliente dice explícitamente las palabras: "Rento", "Alquilo", "Soy inquilino" o "La casa es de un Landlord/Casero". Si no se mencionan estas palabras de arrendamiento, no puedes usar esta etiqueta.
+
 
 📄 REGLA DE SALIDA PARA LA API Responde ÚNICAMENTE con el siguiente formato JSON limpio, sin texto adicional fuera de él:
 {

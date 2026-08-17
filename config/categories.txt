@@ -89,6 +89,12 @@ EJEMPLO REAL DE ERROR A EVITAR (CASO DIEGO MESA):
   "es_correcta": false,
   "tipificacion_sugerida_api": "[Debe ser el nombre exacto de la etiqueta correcta seleccionada tras el descarte estricto, ej: Follow-Up _ Post Sale, Hung Up, No Qualify, o DNC This Number]",
   "justificacion": "[Explica con máxima precisión técnica qué paso del algoritmo secuencial se activó. Si se anula un 'New Appt Scheduled', detalla si fue porque la propiedad no califica por estar remodelada o porque la cita ya había sido pactada en el pasado por otro operador, haciendo que este registro sea un duplicado del sistema]"
+
+  "pensamiento_paso_a_paso": "1. Filtros de Perfil: El interlocutor (Magaly Menocal) es propietaria pero declara explícitamente: 'Yo no tomo decisiones a no ser que mi primo se ocupe de eso'. Por lo tanto, no se valida que el tomador de decisiones califique. 2. Citas Preexistentes: No aplica. 3. Compromiso de Tiempo (Call Back): No se pacta ninguna hora exacta ni fecha en el reloj para devolver la llamada. Solo pide envío de datos. 4. Acción Final (Hung Up / Cierre): La cliente pide que se le envíe la información por correo electrónico y el agente accede a enviarla, despidiéndose de forma cordial sin agendar jamás una visita física. 5. Conclusión: Al no haber una fecha y hora exactas pactadas en el reloj para una visita presencial de un asesor, y al declarar la persona que no toma las decisiones delegando en un tercero, está terminantemente prohibido tipificar 'New Appt Scheduled'. Como el proceso quedó inconcluso para una cita y solo se derivó a un envío de información por correo, la llamada clasifica como un contacto fallido en el cierre de gestión.",
+  "tipificacion_agente": "New Appt Scheduled",
+  "es_correcta": false,
+  "tipificacion_sugerida_api": "Hung Up",
+  "justificacion": "Se anula por completo la tipificación del agente ('New Appt Scheduled'). El sistema cometió un error grave al asumir que el envío de información por correo electrónico ('bellsouth.net') y la cordialidad de la llamada equivalen a una cita exitosa. Para que sea una cita real, el algoritmo exige recolectar un interés en mejoras y establecer de forma obligatoria una fecha y hora exacta en el reloj para la visita física del asesor. Además, la cliente declaró explícitamente que ella no toma las decisiones de la casa. Al no existir la etiqueta 'Llamar luego' o 'Envío de información', toda gestión que quede inconclusa sin una cita real debe ser tipificada obligatoriamente como [Hung Up]."
 }
 
 

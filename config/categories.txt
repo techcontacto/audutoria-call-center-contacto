@@ -81,6 +81,12 @@ EJEMPLO REAL DE ERROR A EVITAR (CASO DIEGO MESA):
 - Error de la IA: Clasificarlo como [New Appt Scheduled] argumentando que "la llamada fue cordial y el agente explicó los beneficios".
 - Corrección Obligatoria: Esto es un [Hung Up]. No se recolectó un interés en mejoras del hogar, no se tomaron datos adicionales y JAMÁS se pactó una fecha y hora exacta en el reloj para que el asesor visite la propiedad de forma física. La cordialidad de la llamada no sustituye la falta de datos de agenda.
 
+PASO EXTRA: DETECCIÓN DE LLAMADAS MUDAS O EN BLANCO [REGLA EMPTY NUMBER / DEAD AIR]
+- ¿La llamada se abre en silencio absoluto por parte del receptor, no hay interacción humana real, no salta ningún buzón de voz, y solo se escucha al operador intentando saludar o un ruido de fondo/grabación vacía?
+  * SÍ: Detén el análisis de inmediato y marca obligatoriamente: [Dead Air].
+  * REGLA DE EXCLUSIÓN CRÍTICA: Está terminantemente PROHIBIDO usar 'Hung Up' o 'Voice Mail' si el audio no contiene la voz de un cliente que cuelga ni la grabación de una contestadora automática. Si la línea se queda muda sin respuesta del receptor desde el inicio (Dead Air), la etiqueta única y correcta es [Dead Air].
+
+
 
 📄 REGLA DE SALIDA PARA LA API Responde ÚNICAMENTE con el siguiente formato JSON limpio, sin texto adicional fuera de él:
 {

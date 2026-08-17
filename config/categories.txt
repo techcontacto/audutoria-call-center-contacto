@@ -121,6 +121,13 @@ ________________________________________
   "tipificacion_sugerida_api": "[Debe ser el nombre exacto de la etiqueta correcta seleccionada tras el descarte estricto, ej: Follow-Up _ Post Sale, Hung Up, No Qualify, Empty Number o DNC This Number]",
   "justificacion": "[Explica con máxima precisión técnica qué paso del algoritmo secuencial se activó. Si se anula la etiqueta del agente, detalla el motivo exacto basado en las reglas: si fue porque la propiedad está remodelada, porque es una línea muda, porque la cita es duplicada, o porque el cliente colgó/pidió correo sin pactar hora en el reloj]"
 }
+{
+  "pensamiento_paso_a_paso": "1. Filtros de Perfil: El interlocutor (Leticia Ayala) declara explícitamente: 'Oh, no, yo no tengo casa, pero gracias', lo que significa de forma directa que no es la dueña de la propiedad y no califica bajo los términos del programa. 2. Citas Preexistentes: No aplica. 3. Llamadas Mudas: Hubo interacción humana real. 4. Compromiso de Tiempo (Call Back): No aplica. 5. Acción Final: El agente se despide cordialmente tras validar que la persona no cumple con el perfil obligatorio. 6. Conclusión: La regla del PASO 1 y PASO 5 del algoritmo unificado establece de forma estricta que si el prospecto no es propietario, renta, alquila o simplemente manifiesta no tener casa, la etiqueta obligatoria y única es [No Qualify: Not an owner], estando terminantemente prohibido desviar este descarte hacia 'Not Interested'.",
+  "tipificacion_agente": "No Qualify: Not an owner",
+  "es_correcta": true,
+  "tipificacion_sugerida_api": "No Qualify: Not an owner",
+  "justificacion": "La tipificación asignada por el agente ('No Qualify: Not an owner') es totalmente CORRECTA. El sistema de IA cometió un fallo grave al anularla y sugerir 'Not Interested'. El algoritmo secuencial de arriba hacia abajo estipula en su PASO 1 que los filtros de perfil de la propiedad tienen prioridad absoluta de cortocircuito. Dado que el cliente declaró de manera literal 'yo no tengo casa', la llamada queda descartada automáticamente por perfil. La IA no debió confundir la amabilidad de la despedida con un rechazo voluntario por falta de interés."
+}
 
  EJEMPLO DE RESPUESTA CORRECTA ESPERADA PARA LA API (CASO DE REFERENCIA):
 Si la llamada analizada corresponde a un cliente que no toma decisiones y pide la información por correo electrónico sin agendar nada (Caso Magaly Menocal), la API debe generar una salida estructurada exactamente así:

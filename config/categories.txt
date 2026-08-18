@@ -149,6 +149,14 @@ Si la llamada analizada corresponde a un cliente que no toma decisiones y pide l
   "tipificacion_sugerida_api": "No Spanish",
   "justificacion": "La tipificación asignada por el agente ('No Spanish') es totalmente CORRECTA. El sistema de IA cometió un error grave de análisis en el bloque número 10 al sugerir 'Not Interested'. La IA argumentó falsamente que el cliente sí hablaba español solo porque repitió palabras básicas como 'aquí', 'allá' o 'vámonos'. Sin embargo, la transcripción demuestra que el cliente exigió atención en inglés desde el primer segundo ('I need your manager to speak to me in English') y posterior a eso solo emitió frases sin ningún sentido lógico ni conexión con el guion del operador. Al no existir una comunicación bidireccional real en español debido a una evidente barrera idiomática (o incapacidad de articulación coherente), la llamada se anula de inmediato bajo la etiqueta de [No Spanish]."
 }
+{
+  "pensamiento_paso_a_paso": "1. Filtros de Perfil: No se detectan filtros de perfil como inquilino, edad o casa remodelada. 2. Citas Preexistentes: La cliente menciona que ya la han llamado varias veces, pero no dice tener una cita programada. 3. Llamadas Mudas: Hubo interacción humana real. 4. Compromiso de Tiempo (Call Back): No aplica. 5. Solicitud de Remoción (Regla DNC): La cliente declara explícitamente: 'Ay, por favor, ya yo le pedí a varias personas que, que descartaran ese número'. Esto constituye una solicitud directa e inequívoca de ser removida de la base de datos y que no se le marque más. 6. Conclusión: El algoritmo en su PASO 7 (Regla DNC) estipula de forma estricta que si el cliente exige que descarten su número, dejen de llamarlo o lo quiten de la lista, se debe asignar obligatoriamente la tipificación de exclusión [DNC This Number] para proteger la base de datos, anulando cualquier otra categoría.",
+  "tipificacion_agente": "Not Interested",
+  "es_correcta": false,
+  "tipificacion_sugerida_api": "DNC This Number",
+  "justificacion": "Se anula por completo la tipificación del agente ('Not Interested') y se corrige el error de la IA (Llamada 2 de la imagen) que sugirió 'Follow-Up _ Post Sale'. El sistema de IA cometió un fallo grave al asumir que era un seguimiento solo porque la cliente dijo 'ya yo le pedí a varias personas que...'. La frase clave 'descartaran ese número' es una instrucción explícita de exclusión telefónica. Bajo el algoritmo unificado, las solicitudes de no volver a marcar tienen prioridad absoluta sobre los cierres comunes y los falsos seguimientos. Dejar este registro fuera de [DNC This Number] provocaría que el marcador automático le vuelva a tirar la llamada, dañando la gestión de la base de datos."
+}
+
 
 
 

@@ -75,119 +75,62 @@ Regla de exclusión: No confundir con el inquilino que dice "no soy dueño". Si 
 
 ---
 
-⚙️ INSTRUCCIONES DE PROCESAMIENTO INTERNO PARA LA IA (ALGORITMO UNIFICADO)
+⚙️ INSTRUCCIONES DE PROCESAMIENTO INTERNO PARA LA IA (ALGORITMO UNIFICADO REFORZADO)
 Para determinar la tipificación correcta, debes evaluar las siguientes preguntas en orden estricto de arriba hacia abajo. En el momento en que una respuesta sea SÍ, detén el análisis de inmediato y asigna esa etiqueta de forma absoluta.
 PASO 1: FILTROS DE PERFIL DE LA PROPIEDAD (NO QUALIFY) - ¡PRIORIDAD ABSOLUTA DE ANULACIÓN!
-Antes de evaluar si el agente fue amable, si completó el guion o si la llamada parece exitosa, DEBES revisar estos filtros. Si uno se cumple, la llamada queda ANULADA de cualquier categoría positiva (Prohibido usar 'New Appt Scheduled').
+Antes de evaluar cualquier otra métrica, DEBES revisar estos filtros. Si uno se cumple, la llamada queda ANULADA de cualquier categoría positiva (Prohibido usar 'New Appt Scheduled').
 •	¿El cliente manifiesta explícitamente que ya tiene la casa remodelada, arreglada, o que TODO ES NUEVO (mencione techo, ventanas, puertas, cocina, etc.)?
 o	SÍ: Detén el análisis de inmediato y marca obligatoriamente: [No Qualify].
-o	⚠️ REGLA ANTI-FALLO DE CITA: No importa si el agente valida la dirección o si la llamada termina de forma muy amigable. Si el cliente dice "ya tengo todo nuevo" o "ya renovamos completa la casa", NO EXISTE CITA POSIBLE. La tipificación correcta SIEMPRE es [No Qualify].
-•	¿El cliente manifestó explícitamente que RENTA, ALQUILA o es INQUILINO de la propiedad?
-o	SÍ: Detén el análisis y marca: [No Qualify: Not an owner]. (Prohibido usar Wrong Number. Si es un familiar como la hija que dice "él no está", pasa de largo al paso de Hung Up).
+o	⚠️ REGLA ANTI-FALLO DE CITA: No importa si la llamada es amigable. Si el cliente dice "ya tengo todo nuevo" o "ya renovamos completa la casa", NO EXISTE CITA POSIBLE. La tipificación correcta SIEMPRE es [No Qualify].
+•	¿El cliente manifestó explícitamente que RENTA, ALQUILA o es INQUILINO de la propiedad, o que NO TIENE CASA?
+o	SÍ: Detén el análisis y marca: [No Qualify: Not an owner]. (Prohibido usar Wrong Number o Not Interested. Si es un familiar como la hija que dice "él no está", pasa de largo al paso de Hung Up).
 •	¿Se mencionó que el propietario tiene más de 80 años de edad?
 o	SÍ: Si no hay un familiar menor a cargo de las finanzas en la casa, detén el análisis y marca: [No Qualify: +80].
 PASO 2: DETECCIÓN DE CITAS PREEXISTENTES / DUPLICADOS [CORRECCIÓN CRÍTICA]
-•	¿El cliente manifiesta que YA lo llamaron antes, que YA habló con otro operador, o aclara que YA tiene una cita programada anteriormente (ej: "ya me llamaron", "mañana viene el especialista", "ya agendé con otra muchacha")?
+•	¿El cliente manifiesta que YA lo llamaron antes, o aclara que YA tiene una cita programada anteriormente con un especialista para el día de hoy o de mañana?
 o	SÍ: Detén el análisis de inmediato y marca obligatoriamente: [Follow-Up _ Post Sale].
-o	⚠️ REGLA ESTRICTA DE REPORTES: Está TERMINANTEMENTE PROHIBIDO sugerir 'New Appt Scheduled' en estos casos. El agente actual no generó la cita desde cero; la llamada cayó por un error de duplicidad en el sistema. Clasificarla como cita nueva dañará los reportes de efectividad reales.
+o	⚠️ REGLA ESTRICTA DE REPORTES: Está TERMINANTEMENTE PROHIBIDO sugerir 'New Appt Scheduled'. El agente actual no generó la cita; es un duplicado del sistema.
 PASO 3: DETECCIÓN DE LLAMADAS MUDAS O EN BLANCO [REGLA EMPTY NUMBER / DEAD AIR]
-•	¿La llamada se abre en silencio absoluto por parte del receptor, no hay interacción humana real, no salta ningún buzón de voz, y solo se escucha al operador intentando saludar o un ruido de fondo/grabación vacía?
-o	SÍ: Detén el análisis de inmediato y marca obligatoriamente: [DEAD AIR].
-o	⚠️ REGLA DE EXCLUSIÓN CRÍTICA: Está terminantemente PROHIBIDO usar 'Hung Up' o 'Voice Mail' si el audio no contiene la voz de un cliente que cuelga ni la grabación de una contestadora automática. Si la línea se queda muda sin respuesta del receptor desde el inicio (Dead Air), la etiqueta única y correcta es [DEAD AIR].
-PASO 4: COMPROMISO DE TIEMPO (ANTI-FALLO CALL BACK)
-•	¿El familiar o cliente propuso o aceptó una HORA EXACTA con números en el reloj (ej: "a las 4:00") o una FECHA concreta para recibir la llamada?
-o	SÍ: Marca [Call Back].
-o	NO: (Solo dijo de forma amable o evasiva "llame después", "llame luego", "vuelva a intentar"): Está PROHIBIDO usar Call Back. Avanza al PASO 5.
-PASO 5: DETECCIÓN DE ACCIÓN FINAL (LA REGLA DEL DESCARTE)
-•	Si la llamada terminó porque el familiar o cliente pidió que llamaran luego (sin dar hora) y la comunicación se cortó o se colgó el teléfono, la tipificación CORRECTA y OBLIGATORIA es: [Hung Up].
-o	Justificación para la IA: En este sistema no existe la etiqueta "llamar luego". Toda llamada que quede a medias porque el interlocutor corta la conversación o cuelga (así sea de manera educada o cordial) se clasifica como [Hung Up].
-PASO 6: REGLA EXCLUSIVA PARA 'NOT AN OWNER'
-•	SOLO utilizarás la etiqueta [No Qualify: Not an owner] si el cliente dice explícitamente las palabras: "Rento", "Alquilo", "Soy inquilino" o "La casa es de un Landlord/Casero". Si no se mencionan estas palabras de arrendamiento, no puedes usar esta etiqueta.
-PASO 7: SOLICITUD DE REMOCIÓN O NO LLAMAR [REGLA DNC]
-•	¿El cliente solicitó explícitamente ser removido de la base de datos, pidió que lo saquen de la lista, o exigió que no lo vuelvan a marcar nunca más (ej: "No me llamen más", "Quítenme de su lista")?
+•	¿La llamada se abre en silencio absoluto por parte del receptor, no hay interacción humana real, no salta ningún buzón de voz, y solo se escucha al operador intentando saludar?
+o	SÍ: Detén el análisis de inmediato y marca obligatoriamente: [Empty Number]. (También conocida en el sistema como [DEAD AIR]).
+PASO 4: COMPROMISO DE TIEMPO TELEFÓNICO (ANTI-FALLO CALL BACK)
+•	¿El familiar o cliente propuso o aceptó una HORA EXACTA con números en el reloj (ej: "a las 4:00") o una FECHA concreta para volver a recibir una llamada telefónica?
+o	SÍ: Marca: [Call Back].
+o	NO: (Solo dijo frases de cortesía o evasión como "llame después", "llame luego"): Está PROHIBIDO usar Call Back. Avanza al PASO 5.
+PASO 5: SOLICITUD DE REMOCIÓN O NO LLAMAR [REGLA DNC]
+•	¿El cliente solicitó ser removido de la base de datos, pidió que lo saquen de la lista, o exigió que descarten su número telefónico?
 o	SÍ: Detén el análisis de inmediato y marca obligatoriamente: [DNC This Number].
-o	Justificación para la IA: Si el cliente pide no ser contactado de nuevo, esta instrucción anula las etiquetas de 'Not Interested' o 'Hung Up'. El sistema debe proteger la base de datos asignando la tipificación de exclusión [DNC This Number].
-[No Spanish] - REGLA DE EVALUACIÓN DE COMPETENCIA LINGÜÍSTICA:
-- Esta etiqueta es CORRECTA si el cliente exige que le hablen en inglés, manifiesta no entender el español, o si tras decirle al agente que no habla inglés, empieza a repetir palabras sueltas en español que NO forman oraciones lógicas ni tienen coherencia con la llamada (ej: "aquí, allá, vámonos").
-- ⚠️ REGLA ANTI-FALLO DE COMPRENSIÓN: Está estrictamente PROHIBIDO que la IA asuma que el cliente "sí habla español" por el simple hecho de pronunciar vocablos aislados. Si el cliente no puede sostener una respuesta estructurada o lógica en español ante las preguntas del operador, la tipificación correcta SIEMPRE será [No Spanish]. Nunca desvíes estos casos a 'Not Interested'.
-PASO MAESTRO: EVALUACIÓN DE GESTIÓN EXITOSA DE CITA NUEVA [REGLA DE EVIDENCIA OBLIGATORIA]
-
-Para que una llamada sea clasificada como [New Appt Scheduled], la IA debe encontrar de forma obligatoria y matemática los siguientes 4 elementos dentro de la transcripción. Si falta TAN SOLO UNO de estos elementos, queda ESTRICTAMENTE PROHIBIDO usar esta etiqueta:
-
-1. ACEPTACIÓN EXPLÍCITA: El cliente debe decir activamente que 'SÍ' acepta recibir al asesor o especialista en su propiedad. (Prohibido asumir aceptación solo porque el cliente sea cordial o escuche al agente).
-2. INTERÉS EN MEJORAS: El cliente debe manifestar o confirmar una necesidad o interés real en algún área de la casa (ej: ventanas de impacto, puertas, techo, paneles, etc.).
-3. DÍA DE LA SEMANA EXACTO: Debe quedar pactado textualmente un día específico (ej: 'mañana', 'el lunes', 'el jueves').
-4. HORA EXACTA EN EL RELOJ: Debe existir un compromiso horario numérico y cerrado (ej: 'a las 5', 'a las 6 de la tarde', 'a las 10 de la mañana'). Los bloques abiertos o las frases de cortesía como "llame después" o "venga cuando pueda" NO CUMPLEN esta condición.
-
-⚠️ REGLA DE CORTE ABRUPTO (CORTOCIRCUITO TOTAL): 
-Si el agente propone un día y una hora, o valida la dirección, pero la llamada se corta, se cuelga o el cliente dice "mándeme un correo" antes de confirmar el acuerdo mutuo de la visita, la gestión quedó INCONCLUSA. En ese caso, la tipificación correcta SIEMPRE será [Hung Up], sin importar qué tan educada haya sido la conversación previa.
-
-
+PASO 6: BARRERA IDIOMÁTICA Y COHERENCIA (NO SPANISH)
+•	¿El cliente exige atención en inglés, manifiesta no entender español, o solo repite vocablos sueltos e inconexos en español sin sentido gramatical ni coherencia (ej: "aquí, allá, vámonos")?
+o	SÍ: Detén el análisis de inmediato y marca obligatoriamente: [No Spanish]. (Prohibido asumir que habla español por usar palabras aisladas).
+PASO 7: DETECCIÓN DE ACCIÓN FINAL (LA REGLA DEL DESCARTE)
+•	Si la llamada terminó porque el familiar o cliente pidió que llamaran luego (sin dar hora), pidió un correo informativo sin agendar, o la comunicación se cortó/colgó dejando la gestión a medias:
+o	SÍ: Marca obligatoriamente: [Hung Up].
+o	⚠️ JUSTIFICACIÓN PARA LA IA: En este sistema no existe la etiqueta "llamar luego" o "envío de información". Toda llamada que quede inconclusa sin una cita real física cerrada con el personal de campo se clasifica como [Hung Up].
+PASO 8: REGLA EXCLUSIVA PARA 'NOT AN OWNER'
+•	SOLO utilizarás la etiqueta [No Qualify: Not an owner] si el cliente dice explícitamente las palabras: "Rento", "Alquilo", "Soy inquilino", "La casa es de un Landlord" o "No tengo casa". Si no se mencionan estas palabras, no puedes usar esta etiqueta.
+PASO 9: EVALUACIÓN ULTRA-ESTRICTA DE CITA FÍSICA NUEVA (SANGRE FRÍA)
+•	Para calificar como [New Appt Scheduled], la IA debe encontrar de forma obligatoria y matemática los siguientes 4 elementos en la transcripción. Si falta TAN SOLO UNO, está PROHIBIDO usar esta etiqueta:
+1.	ACEPTACIÓN EXPLÍCITA: El cliente debe decir activamente que "SÍ" acepta recibir la visita en su hogar.
+2.	INTERÉS EN MEJORAS: El cliente confirma una necesidad real en el hogar (ej: ventanas, puertas de impacto, techo).
+3.	DÍA DE LA SEMANA EXACTO: Debe quedar pactado textualmente un día específico (ej: 'mañana', 'el lunes', 'el jueves').
+4.	HORA EXACTA DE LA VISITA EN EL RELOJ: Debe existir un compromiso horario numérico y cerrado (ej: 'a las 5', 'a las 6 de la tarde') para la visita física por parte del personal de campo. Los bloques abiertos de "venga cuando quiera" o llamadas colgadas a mitad de la explicación del guion NO CUMPLEN esta condición.
 ________________________________________
-📌 EJEMPLO DE ENTRENAMIENTO PARA CASOS DE INTERRUPCIÓN (CASO DIEGO MESA):
-•	Transcripción: El agente valida la dirección, confirma que es dueño y empieza a explicar el subsidio de 10,000 dólares. Justo cuando dice "...esta semana se inició una jornada informativa en la ciudad, en la cual..." la llamada se corta o el cliente cuelga educadamente.
-•	Error de la IA a evitar: Clasificarlo como [New Appt Scheduled] argumentando que "la llamada fue cordial y el agente explicó los beneficios".
-•	Corrección Obligatoria: Esto es un [Hung Up]. No se recolectó un interés en mejoras del hogar, no se tomaron datos adicionales y JAMÁS se pactó una fecha y hora exacta en el reloj para que el asesor visite la propiedad de forma física. La cordialidad de la llamada no sustituye la falta de datos de agenda.
-
-📄 REGLA DE SALIDA PARA LA APIResponde ÚNICAMENTE con el siguiente formato JSON limpio, sin texto adicional fuera de él. El cumplimiento de la estructura y la evaluación secuencial paso a paso es obligatorio.
+📌 EJEMPLOS DE ENTRENAMIENTO DE CONTRASTE PARA LA IA
+FALSO POSITIVO A EVITAR (CASO DE CORTE O EVASIÓN - JORGE NÁPOLES / DIEGO MESA)
+•	Escenario: El agente valida la dirección y le propone un horario (ej: "el día de mañana estarán los asesores"), pero el cliente muestra resistencia, pide un correo o la llamada se corta de golpe antes de que el cliente diga "Sí, acepto la visita a tal hora".
+•	Error de la IA: Clasificarlo como cita exitosa porque la llamada fue "cordial".
+•	Corrección Obligatoria: Esto es un [Hung Up]. El cliente nunca aceptó la visita con una fecha y hora exacta para el personal de campo.
+CASO CITA EXITOSA REAL (SOLEMNE MOLDE - ENA MILETT)
+•	Escenario: El cliente interactúa, selecciona activamente el día ('lunes'), fija la hora exacta en el reloj ('a las 6 de la tarde'), declara el interés específico ('puertas y ventanas de impacto') y acuerda recibir al especialista.
+•	Tipificación Correcta: [New Appt Scheduled].
+________________________________________
+📄 REGLA DE SALIDA PARA LA API
+Responde ÚNICAMENTE con el siguiente formato JSON limpio, sin texto adicional fuera de él. El cumplimiento de la estructura y la evaluación secuencial paso a paso es obligatorio.
 {
-  "pensamiento_paso_a_paso": "[Escribe aquí el análisis secuencial obligatorio evaluando paso por paso: 1. ¿El cliente es inquilino o tiene la casa totalmente nueva/remodelada? 2. ¿El cliente ya tenía una cita agendada previamente o la llamada es un duplicado del sistema? 3. ¿Hubo interacción humana real o la línea estuvo muda/sin receptor (Empty Number)? 4. ¿Se definió una hora exacta y numérica en el reloj para llamar (Call Back)? 5. ¿Hubo corte físico de línea, colgada cordial, envío de correo sin cita o solicitud de DNC?]",
+  "pensamiento_paso_a_paso": "[Escribe aquí el análisis secuencial obligatorio evaluando paso por paso: 1. ¿El cliente es inquilino, no tiene casa o tiene la vivienda totalmente nueva/remodelada? 2. ¿El cliente ya tenía una cita agendada previamente o la llamada es un duplicado del sistema? 3. ¿Hubo interacción humana real o la línea estuvo muda (Empty Number)? 4. ¿Se definió una hora exacta y numérica en el reloj para llamar (Call Back)? 5. ¿Hubo corte físico de línea, colgada cordial, envío de correo sin cita, palabras sueltas en español o solicitud de DNC? 6. ¿Se cerró la llamada con un día de la semana y una hora exacta numérica en el reloj para la visita física del personal de campo?]",
   "tipificacion_agente": "[Nombre exacto seleccionado por el agente u operador]",
   "es_correcta": false,
-  "tipificacion_sugerida_api": "[Debe ser el nombre exacto de la etiqueta correcta seleccionada tras el descarte estricto, ej: Follow-Up _ Post Sale, Hung Up, No Qualify, Empty Number o DNC This Number]",
-  "justificacion": "[Explica con máxima precisión técnica qué paso del algoritmo secuencial se activó. Si se anula la etiqueta del agente, detalla el motivo exacto basado en las reglas: si fue porque la propiedad está remodelada, porque es una línea muda, porque la cita es duplicada, o porque el cliente colgó/pidió correo sin pactar hora en el reloj]"
+  "tipificacion_sugerida_api": "[Debe ser el nombre exacto de la etiqueta correcta seleccionada tras el descarte estricto, ej: Follow-Up _ Post Sale, Hung Up, No Qualify, Empty Number, No Spanish o DNC This Number]",
+  "justificacion": "[Explica con máxima precisión técnica qué paso del algoritmo secuencial se activó. Si se anula un 'New Appt Scheduled', detalla de forma obligatoria que el cliente nunca aceptó formalmente recibir la visita o que no se estableció una fecha y una hora exacta en el reloj para el personal de campo, haciendo imposible procesar el registro como una cita real]"
 }
-{
-  "pensamiento_paso_a_paso": "1. Filtros de Perfil: El interlocutor (Leticia Ayala) declara explícitamente: 'Oh, no, yo no tengo casa, pero gracias', lo que significa de forma directa que no es la dueña de la propiedad y no califica bajo los términos del programa. 2. Citas Preexistentes: No aplica. 3. Llamadas Mudas: Hubo interacción humana real. 4. Compromiso de Tiempo (Call Back): No aplica. 5. Acción Final: El agente se despide cordialmente tras validar que la persona no cumple con el perfil obligatorio. 6. Conclusión: La regla del PASO 1 y PASO 5 del algoritmo unificado establece de forma estricta que si el prospecto no es propietario, renta, alquila o simplemente manifiesta no tener casa, la etiqueta obligatoria y única es [No Qualify: Not an owner], estando terminantemente prohibido desviar este descarte hacia 'Not Interested'.",
-  "tipificacion_agente": "No Qualify: Not an owner",
-  "es_correcta": true,
-  "tipificacion_sugerida_api": "No Qualify: Not an owner",
-  "justificacion": "La tipificación asignada por el agente ('No Qualify: Not an owner') es totalmente CORRECTA. El sistema de IA cometió un fallo grave al anularla y sugerir 'Not Interested'. El algoritmo secuencial de arriba hacia abajo estipula en su PASO 1 que los filtros de perfil de la propiedad tienen prioridad absoluta de cortocircuito. Dado que el cliente declaró de manera literal 'yo no tengo casa', la llamada queda descartada automáticamente por perfil. La IA no debió confundir la amabilidad de la despedida con un rechazo voluntario por falta de interés."
-}
-
- EJEMPLO DE RESPUESTA CORRECTA ESPERADA PARA LA API (CASO DE REFERENCIA):
-Si la llamada analizada corresponde a un cliente que no toma decisiones y pide la información por correo electrónico sin agendar nada (Caso Magaly Menocal), la API debe generar una salida estructurada exactamente así:
-{
-  "pensamiento_paso_a_paso": "1. Filtros de Perfil: El interlocutor es propietaria pero declara explícitamente: 'Yo no tomo decisiones a no ser que mi primo se ocupe de eso'. Por lo tanto, el tomador de decisiones no califica. 2. Citas Preexistentes: No aplica. 3. Llamadas Mudas: Hubo interacción humana real. 4. Compromiso de Tiempo (Call Back): No se pacta ninguna hora exacta ni fecha en el reloj para devolver la llamada. Solo pide envío de datos. 5. Acción Final: La cliente pide que se le envíe la información por correo electrónico y el agente accede, despidiéndose de forma cordial sin agendar jamás una visita física ni recolectar interés real.",
-  "tipificacion_agente": "New Appt Scheduled",
-  "es_correcta": false,
-  "tipificacion_sugerida_api": "Hung Up",
-  "justificacion": "Se anula por completo la tipificación del agente ('New Appt Scheduled'). El sistema cometió un error grave al asumir que el envío de información por correo electrónico y la cordialidad de la llamada equivalen a una cita exitosa. Para que sea una cita real, el algoritmo exige establecer de forma obligatoria una fecha y hora exacta en el reloj para la visita física del asesor. Al no existir la etiqueta 'Envío de información', toda gestión que quede inconclusa sin una cita real debe ser tipificada obligatoriamente como [Hung Up]."
-}
-{
-  "pensamiento_paso_a_paso": "1. Filtros de Perfil: No aplica. 2. Citas Preexistentes: No aplica. 3. Llamadas Mudas: Hubo interacción, pero el cliente no entabla una conversación coherente. 4. Barrera Idiomática y Coherencia (No Spanish): El cliente inicia exigiendo en inglés: 'I need your manager to speak to me in English to take care of this issue'. Cuando el agente le indica que no habla inglés, el cliente empieza a repetir palabras sueltas en español totalmente inconexas y sin estructura alguna ('Arriba, aquí, allá', 'Vámonos, vámonos'). El cliente demuestra una incapacidad absoluta para comprender o comunicarse de manera efectiva en español. 5. Conclusión: El hecho de que un hablante nativo de inglés o extranjero repita palabras sueltas o frases aisladas sin sentido gramatical ni coherencia no significa que domine o entienda el idioma. Existe una barrera lingüística real insuperable en la llamada que impidió cualquier gestión.",
-  "tipificacion_agente": "No Spanish",
-  "es_correcta": true,
-  "tipificacion_sugerida_api": "No Spanish",
-  "justificacion": "La tipificación asignada por el agente ('No Spanish') es totalmente CORRECTA. El sistema de IA cometió un error grave de análisis en el bloque número 10 al sugerir 'Not Interested'. La IA argumentó falsamente que el cliente sí hablaba español solo porque repitió palabras básicas como 'aquí', 'allá' o 'vámonos'. Sin embargo, la transcripción demuestra que el cliente exigió atención en inglés desde el primer segundo ('I need your manager to speak to me in English') y posterior a eso solo emitió frases sin ningún sentido lógico ni conexión con el guion del operador. Al no existir una comunicación bidireccional real en español debido a una evidente barrera idiomática (o incapacidad de articulación coherente), la llamada se anula de inmediato bajo la etiqueta de [No Spanish]."
-}
-{
-  "pensamiento_paso_a_paso": "1. Filtros de Perfil: No se detectan filtros de perfil como inquilino, edad o casa remodelada. 2. Citas Preexistentes: La cliente menciona que ya la han llamado varias veces, pero no dice tener una cita programada. 3. Llamadas Mudas: Hubo interacción humana real. 4. Compromiso de Tiempo (Call Back): No aplica. 5. Solicitud de Remoción (Regla DNC): La cliente declara explícitamente: 'Ay, por favor, ya yo le pedí a varias personas que, que descartaran ese número'. Esto constituye una solicitud directa e inequívoca de ser removida de la base de datos y que no se le marque más. 6. Conclusión: El algoritmo en su PASO 7 (Regla DNC) estipula de forma estricta que si el cliente exige que descarten su número, dejen de llamarlo o lo quiten de la lista, se debe asignar obligatoriamente la tipificación de exclusión [DNC This Number] para proteger la base de datos, anulando cualquier otra categoría.",
-  "tipificacion_agente": "Not Interested",
-  "es_correcta": false,
-  "tipificacion_sugerida_api": "DNC This Number",
-  "justificacion": "Se anula por completo la tipificación del agente ('Not Interested') y se corrige el error de la IA (Llamada 2 de la imagen) que sugirió 'Follow-Up _ Post Sale'. El sistema de IA cometió un fallo grave al asumir que era un seguimiento solo porque la cliente dijo 'ya yo le pedí a varias personas que...'. La frase clave 'descartaran ese número' es una instrucción explícita de exclusión telefónica. Bajo el algoritmo unificado, las solicitudes de no volver a marcar tienen prioridad absoluta sobre los cierres comunes y los falsos seguimientos. Dejar este registro fuera de [DNC This Number] provocaría que el marcador automático le vuelva a tirar la llamada, dañando la gestión de la base de datos."
-}
-{
-  "pensamiento_paso_a_paso": "1. Filtros de Perfil: El cliente no menciona filtros de edad o propiedad. 2. Citas Preexistentes: No aplica. 3. Llamadas Mudas: Hubo interacción humana real. 4. Compromiso de Tiempo (Call Back): No aplica. 5. Acción Final (Corte / Inconcluso): El agente valida la dirección y pregunta por la disponibilidad para el día de mañana, pero la transcripción se corta abruptamente en ese punto exacto. No existe ninguna respuesta afirmativa del cliente aceptando la visita, ni se pactaron datos específicos de hora en el reloj. 6. Conclusión: Al no haber una aceptación explícita por parte del cliente con un día y una hora exacta acordados para la visita presencial del asesor, está terminantemente prohibido tipificar 'New Appt Scheduled'. Como el proceso quedó totalmente a medias e inconcluso, la llamada clasifica como un corte de comunicación.",
-  "tipificacion_agente": "Hung Up",
-  "es_correcta": true,
-  "tipificacion_sugerida_api": "Hung Up",
-  "justificacion": "La tipificación asignada por el operador ('Hung Up') es completamente CORRECTA. El sistema de IA cometió un fallo grave en la llamada número 7 de la imagen al anularla y sugerir 'New Appt Scheduled'. El modelo argumentó erróneamente que la llamada era una cita exitosa porque finalizó de manera 'cordial'. Sin embargo, bajo el algoritmo unificado, una gestión solo puede ser clasificada como cita si el cliente acepta explícitamente recibir al asesor y se define de forma obligatoria una fecha y hora exacta en el reloj para la visita física. Lanzar una propuesta de horario y validar la dirección no equivale a cerrar una cita. Al quedar la llamada interrumpida y sin el compromiso final del cliente, la etiqueta única y obligatoria es [Hung Up]."
-}
-{
-  "pensamiento_paso_a_paso": "1. Filtros de Perfil: El cliente confirma ser propietario pero no menciona edad ni casa remodelada. 2. Citas Preexistentes: No aplica. 3. Llamadas Mudas: Hubo interacción humana real. 4. Compromiso de Tiempo (Call Back): No aplica. 5. Acción Final (Corte / Inconcluso): El agente intenta explicar los beneficios y le pide disponibilidad para el día de mañana o la semana. Sin embargo, el cliente muestra resistencia y desconfianza repitiendo: 'Pero no me estás diciendo qué es lo que quieres. ¿Qué es lo que quieres informarme?'. La transcripción se interrumpió de golpe mientras el agente respondía con tartamudeos y evasivas, sin que el cliente aceptara jamás recibir a un asesor en su propiedad. 6. Conclusión: Bajo el algoritmo secuencial, una llamada solo califica como cita agendada si el prospecto dice explícitamente 'sí' y se pacta una fecha y hora exacta en el reloj para la visita física. Al no existir estos datos duros y quedar el proceso a medias tras la queja del cliente, está estrictamente prohibido elegir 'New Appt Scheduled'.",
-  "tipificacion_agente": "Hung Up",
-  "es_correcta": true,
-  "tipificacion_sugerida_api": "Hung Up",
-  "justificacion": "La tipificación asignada por el operador ('Hung Up') es totalmente CORRECTA. El sistema de IA cometió un fallo grave en la llamada número 9 de la imagen al calificarla como 'New Appt Scheduled'. La IA se dejó engañar por su propio análisis superficial al poner en el resumen que el agente 'logró agendar la cita exitosamente'. La transcripción demuestra de forma contundente que el cliente (Jorge Nápoles) nunca aceptó la visita; al contrario, se sentía confundido y exigía respuestas claras ('¿Qué es lo que quieres?'). Dado que el proceso se cortó de golpe sin recopilar interés real y sin establecer un día ni una hora exacta en el reloj para que el especialista acuda al domicilio, la llamada quedó inconclusa y debe clasificarse obligatoriamente como [Hung Up]."
-}
-{
-  "pensamiento_paso_a_paso": "1. Filtros de Perfil: El cliente confirma que es propietario, no se reportan filtros de casa remodelada ni edad mayor a 80 años sin familiares a cargo. 2. Citas Preexistentes: No aplica, se gestiona desde cero. 3. Llamadas Mudas: Hubo interacción humana completa. 4. Compromiso de Tiempo (Cita/Call Back): Se pacta explícitamente el día 'lunes' y tras varias negociaciones de horarios se cierra en la hora exacta de las '6 de la tarde'. El cliente recolecta un interés real en una necesidad específica de la vivienda ('puertas y ventanas de impacto es lo que yo estoy tratando'). 5. Acción Final: La llamada finaliza con un acuerdo mutuo donde el cliente acepta la visita, acepta una llamada de confirmación una hora antes, se despide de forma natural y el agente realiza un cierre completo de gestión. 6. Conclusión: Cumple al 100% con todos los requisitos matemáticos y comerciales para ser una cita válida.",
-  "tipificacion_agente": "New Appt Scheduled",
-  "es_correcta": true,
-  "tipificacion_sugerida_api": "New Appt Scheduled",
-  "justificacion": "La tipificación del agente ('New Appt Scheduled') es totalmente CORRECTA. Esta llamada es el ejemplo perfecto de una cita agendada real. A diferencia de los falsos positivos anteriores donde el cliente colgaba o evadía al operador, aquí la cliente (Ena Milett) aceptó explícitamente la visita, seleccionó activamente un día de la semana ('lunes'), fijó una hora exacta en el reloj ('a las 6') coordinando en base a la disponibilidad de su hija, y declaró un interés específico en mejoras del hogar ('puertas y ventanas de impacto'). El proceso del guion se completó de principio a fin, cerrando con una despedida natural y un acuerdo mutuo."
-}
-
-

@@ -156,7 +156,13 @@ Si la llamada analizada corresponde a un cliente que no toma decisiones y pide l
   "tipificacion_sugerida_api": "DNC This Number",
   "justificacion": "Se anula por completo la tipificación del agente ('Not Interested') y se corrige el error de la IA (Llamada 2 de la imagen) que sugirió 'Follow-Up _ Post Sale'. El sistema de IA cometió un fallo grave al asumir que era un seguimiento solo porque la cliente dijo 'ya yo le pedí a varias personas que...'. La frase clave 'descartaran ese número' es una instrucción explícita de exclusión telefónica. Bajo el algoritmo unificado, las solicitudes de no volver a marcar tienen prioridad absoluta sobre los cierres comunes y los falsos seguimientos. Dejar este registro fuera de [DNC This Number] provocaría que el marcador automático le vuelva a tirar la llamada, dañando la gestión de la base de datos."
 }
-
+{
+  "pensamiento_paso_a_paso": "1. Filtros de Perfil: El cliente no menciona filtros de edad o propiedad. 2. Citas Preexistentes: No aplica. 3. Llamadas Mudas: Hubo interacción humana real. 4. Compromiso de Tiempo (Call Back): No aplica. 5. Acción Final (Corte / Inconcluso): El agente valida la dirección y pregunta por la disponibilidad para el día de mañana, pero la transcripción se corta abruptamente en ese punto exacto. No existe ninguna respuesta afirmativa del cliente aceptando la visita, ni se pactaron datos específicos de hora en el reloj. 6. Conclusión: Al no haber una aceptación explícita por parte del cliente con un día y una hora exacta acordados para la visita presencial del asesor, está terminantemente prohibido tipificar 'New Appt Scheduled'. Como el proceso quedó totalmente a medias e inconcluso, la llamada clasifica como un corte de comunicación.",
+  "tipificacion_agente": "Hung Up",
+  "es_correcta": true,
+  "tipificacion_sugerida_api": "Hung Up",
+  "justificacion": "La tipificación asignada por el operador ('Hung Up') es completamente CORRECTA. El sistema de IA cometió un fallo grave en la llamada número 7 de la imagen al anularla y sugerir 'New Appt Scheduled'. El modelo argumentó erróneamente que la llamada era una cita exitosa porque finalizó de manera 'cordial'. Sin embargo, bajo el algoritmo unificado, una gestión solo puede ser clasificada como cita si el cliente acepta explícitamente recibir al asesor y se define de forma obligatoria una fecha y hora exacta en el reloj para la visita física. Lanzar una propuesta de horario y validar la dirección no equivale a cerrar una cita. Al quedar la llamada interrumpida y sin el compromiso final del cliente, la etiqueta única y obligatoria es [Hung Up]."
+}
 
 
 

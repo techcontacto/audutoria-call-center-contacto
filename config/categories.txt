@@ -110,6 +110,18 @@ o	Justificación para la IA: Si el cliente pide no ser contactado de nuevo, esta
 [No Spanish] - REGLA DE EVALUACIÓN DE COMPETENCIA LINGÜÍSTICA:
 - Esta etiqueta es CORRECTA si el cliente exige que le hablen en inglés, manifiesta no entender el español, o si tras decirle al agente que no habla inglés, empieza a repetir palabras sueltas en español que NO forman oraciones lógicas ni tienen coherencia con la llamada (ej: "aquí, allá, vámonos").
 - ⚠️ REGLA ANTI-FALLO DE COMPRENSIÓN: Está estrictamente PROHIBIDO que la IA asuma que el cliente "sí habla español" por el simple hecho de pronunciar vocablos aislados. Si el cliente no puede sostener una respuesta estructurada o lógica en español ante las preguntas del operador, la tipificación correcta SIEMPRE será [No Spanish]. Nunca desvíes estos casos a 'Not Interested'.
+PASO MAESTRO: EVALUACIÓN DE GESTIÓN EXITOSA DE CITA NUEVA [REGLA DE EVIDENCIA OBLIGATORIA]
+
+Para que una llamada sea clasificada como [New Appt Scheduled], la IA debe encontrar de forma obligatoria y matemática los siguientes 4 elementos dentro de la transcripción. Si falta TAN SOLO UNO de estos elementos, queda ESTRICTAMENTE PROHIBIDO usar esta etiqueta:
+
+1. ACEPTACIÓN EXPLÍCITA: El cliente debe decir activamente que 'SÍ' acepta recibir al asesor o especialista en su propiedad. (Prohibido asumir aceptación solo porque el cliente sea cordial o escuche al agente).
+2. INTERÉS EN MEJORAS: El cliente debe manifestar o confirmar una necesidad o interés real en algún área de la casa (ej: ventanas de impacto, puertas, techo, paneles, etc.).
+3. DÍA DE LA SEMANA EXACTO: Debe quedar pactado textualmente un día específico (ej: 'mañana', 'el lunes', 'el jueves').
+4. HORA EXACTA EN EL RELOJ: Debe existir un compromiso horario numérico y cerrado (ej: 'a las 5', 'a las 6 de la tarde', 'a las 10 de la mañana'). Los bloques abiertos o las frases de cortesía como "llame después" o "venga cuando pueda" NO CUMPLEN esta condición.
+
+⚠️ REGLA DE CORTE ABRUPTO (CORTOCIRCUITO TOTAL): 
+Si el agente propone un día y una hora, o valida la dirección, pero la llamada se corta, se cuelga o el cliente dice "mándeme un correo" antes de confirmar el acuerdo mutuo de la visita, la gestión quedó INCONCLUSA. En ese caso, la tipificación correcta SIEMPRE será [Hung Up], sin importar qué tan educada haya sido la conversación previa.
+
 
 ________________________________________
 📌 EJEMPLO DE ENTRENAMIENTO PARA CASOS DE INTERRUPCIÓN (CASO DIEGO MESA):
@@ -169,6 +181,13 @@ Si la llamada analizada corresponde a un cliente que no toma decisiones y pide l
   "es_correcta": true,
   "tipificacion_sugerida_api": "Hung Up",
   "justificacion": "La tipificación asignada por el operador ('Hung Up') es totalmente CORRECTA. El sistema de IA cometió un fallo grave en la llamada número 9 de la imagen al calificarla como 'New Appt Scheduled'. La IA se dejó engañar por su propio análisis superficial al poner en el resumen que el agente 'logró agendar la cita exitosamente'. La transcripción demuestra de forma contundente que el cliente (Jorge Nápoles) nunca aceptó la visita; al contrario, se sentía confundido y exigía respuestas claras ('¿Qué es lo que quieres?'). Dado que el proceso se cortó de golpe sin recopilar interés real y sin establecer un día ni una hora exacta en el reloj para que el especialista acuda al domicilio, la llamada quedó inconclusa y debe clasificarse obligatoriamente como [Hung Up]."
+}
+{
+  "pensamiento_paso_a_paso": "1. Filtros de Perfil: El cliente confirma que es propietario, no se reportan filtros de casa remodelada ni edad mayor a 80 años sin familiares a cargo. 2. Citas Preexistentes: No aplica, se gestiona desde cero. 3. Llamadas Mudas: Hubo interacción humana completa. 4. Compromiso de Tiempo (Cita/Call Back): Se pacta explícitamente el día 'lunes' y tras varias negociaciones de horarios se cierra en la hora exacta de las '6 de la tarde'. El cliente recolecta un interés real en una necesidad específica de la vivienda ('puertas y ventanas de impacto es lo que yo estoy tratando'). 5. Acción Final: La llamada finaliza con un acuerdo mutuo donde el cliente acepta la visita, acepta una llamada de confirmación una hora antes, se despide de forma natural y el agente realiza un cierre completo de gestión. 6. Conclusión: Cumple al 100% con todos los requisitos matemáticos y comerciales para ser una cita válida.",
+  "tipificacion_agente": "New Appt Scheduled",
+  "es_correcta": true,
+  "tipificacion_sugerida_api": "New Appt Scheduled",
+  "justificacion": "La tipificación del agente ('New Appt Scheduled') es totalmente CORRECTA. Esta llamada es el ejemplo perfecto de una cita agendada real. A diferencia de los falsos positivos anteriores donde el cliente colgaba o evadía al operador, aquí la cliente (Ena Milett) aceptó explícitamente la visita, seleccionó activamente un día de la semana ('lunes'), fijó una hora exacta en el reloj ('a las 6') coordinando en base a la disponibilidad de su hija, y declaró un interés específico en mejoras del hogar ('puertas y ventanas de impacto'). El proceso del guion se completó de principio a fin, cerrando con una despedida natural y un acuerdo mutuo."
 }
 
 

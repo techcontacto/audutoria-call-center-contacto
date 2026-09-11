@@ -56,12 +56,17 @@ async function runBackgroundAnalysis(jobId: string) {
     const ai = getAi();
     const results: any[] = [];
 
-    for (let i = 0; i < job.preparedItems.length; i++) {
-      if (i > 0) await new Promise(resolve => setTimeout(resolve, 30000));
+    // Process in batches of 5
+    for (let i = 0; i < job.preparedItems.length; i += 5) {
+      if (i > 0) {
+        console.log(`Waiting 3 minutes before processing batch starting at ${i}...`);
+        await new Promise(resolve => setTimeout(resolve, 180000));
+      }
 
-      const item = job.preparedItems[i];
-      try {
-        const prompt = `Eres un auditor experto en calidad (QA) de call centers.
+      const batch = job.preparedItems.slice(i, i + 5);
+      const batchResults = await Promise.all(batch.map(async (item) => {
+        try {
+          const prompt = `Eres un auditor experto en calidad (QA) de call centers.
 1. GUIÓN GENERAL: """${config.script}"""
 2. MANEJO DE OBJECIONES: """${config.objections}"""
 3. TIPIFICACIONES DISPONIBLES: """${config.categories}"""
@@ -77,18 +82,20 @@ Evalúa el desempeño y devuelve JSON:
 }
 Responde SOLO con JSON en español.`;
 
-        const response = await ai.models.generateContent({
-          model: "gemini-3.1-flash-lite",
-          contents: [{ role: "user", parts: [{ inlineData: { mimeType: item.mimeType, data: item.base64Audio } }, { text: prompt }] }],
-          config: { responseMimeType: "application/json", temperature: 0.1, }
-        });
+          const response = await ai.models.generateContent({
+            model: "gemini-3.1-flash-lite",
+            contents: [{ role: "user", parts: [{ inlineData: { mimeType: item.mimeType, data: item.base64Audio } }, { text: prompt }] }],
+            config: { responseMimeType: "application/json", temperature: 0.1, }
+          });
 
-        let reportText = response.text || "{}";
-        reportText = reportText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-        results.push({ success: true, item, report: JSON.parse(reportText) });
-      } catch (err: any) {
-        results.push({ success: false, item, error: err.message });
-      }
+          let reportText = response.text || "{}";
+          reportText = reportText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+          return { success: true, item, report: JSON.parse(reportText) };
+        } catch (err: any) {
+          return { success: false, item, error: err.message };
+        }
+      }));
+      results.push(...batchResults);
     }
 
     const validResults = results.filter(r => r.success && r.report);

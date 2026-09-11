@@ -168,7 +168,7 @@ export default function App() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="px-6 py-5 border-b border-gray-200 bg-gray-50/50 flex justify-between items-center">
                 <h2 className="text-lg font-semibold text-gray-900">Audios a Procesar</h2>
-                <span className="text-xs font-semibold bg-gray-200 text-gray-700 px-2 py-1 rounded-full">{items.length}/10</span>
+                <span className="text-xs font-semibold bg-gray-200 text-gray-700 px-2 py-1 rounded-full">{items.length}/100</span>
               </div>
               
               <form onSubmit={handleSubmit} className="p-6 space-y-6">

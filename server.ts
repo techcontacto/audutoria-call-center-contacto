@@ -57,7 +57,7 @@ async function runBackgroundAnalysis(jobId: string) {
     const results: any[] = [];
 
     for (let i = 0; i < job.preparedItems.length; i++) {
-      if (i > 0) await new Promise(resolve => setTimeout(resolve, 60000));
+      if (i > 0) await new Promise(resolve => setTimeout(resolve, 30000));
 
       const item = job.preparedItems[i];
       try {

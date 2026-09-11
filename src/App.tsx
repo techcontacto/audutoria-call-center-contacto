@@ -279,7 +279,7 @@ export default function App() {
                 </div>
 
                 <div className="flex gap-3">
-                  {items.length < 10 && (
+                  {items.length < 100 && (
                     <button
                       type="button"
                       onClick={addItem}

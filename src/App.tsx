@@ -26,6 +26,7 @@ interface AuditItem {
   url?: string;
   expectedCategory: string;
   sourceName?: string;
+  operatorName?: string; // Added operator name
 }
 
 interface AuditResult {
@@ -48,19 +49,18 @@ function extractPhoneNumber(source: string) {
 
 export default function App() {
   const [items, setItems] = useState<AuditItem[]>([
-    { id: Math.random().toString(), type: 'file', expectedCategory: '' }
+    { id: Math.random().toString(), type: 'file', expectedCategory: '', operatorName: '' }
   ]);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<AuditResult[] | null>(null);
   const [generalSummary, setGeneralSummary] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [agentName, setAgentName] = useState("");
 
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   const addItem = () => {
-    if (items.length >= 10) return;
-    setItems([...items, { id: Math.random().toString(), type: 'file', expectedCategory: '' }]);
+    if (items.length >= 100) return;
+    setItems([...items, { id: Math.random().toString(), type: 'file', expectedCategory: '', operatorName: '' }]);
   };
 
   const removeItem = (id: string) => {
@@ -78,16 +78,13 @@ export default function App() {
     // Validate
     for (const item of items) {
       if (item.type === 'file' && !item.file) {
-        setError('Por favor sube un archivo para todos los items de tipo archivo.');
-        return;
+        setError('Por favor sube un archivo.'); return;
       }
       if (item.type === 'url' && !item.url) {
-        setError('Por favor ingresa una URL para todos los items de tipo URL.');
-        return;
+        setError('Por favor ingresa una URL.'); return;
       }
-      if (!item.expectedCategory) {
-        setError('Por favor ingresa la tipificación esperada para todos los items.');
-        return;
+      if (!item.expectedCategory || !item.operatorName) {
+        setError('Tipificación y Operador son requeridos.'); return;
       }
     }
 
@@ -98,104 +95,50 @@ export default function App() {
 
     const formData = new FormData();
     const requestItems: any[] = [];
-    let fileIndex = 0;
-
-    items.forEach(item => {
+    items.forEach((item, index) => {
       if (item.type === 'file' && item.file) {
         formData.append('audios', item.file);
-        requestItems.push({ type: 'file', fileIndex: fileIndex++, expectedCategory: item.expectedCategory });
+        requestItems.push({ type: 'file', fileIndex: index, expectedCategory: item.expectedCategory, operatorName: item.operatorName });
       } else if (item.type === 'url') {
-        requestItems.push({ type: 'url', url: item.url, expectedCategory: item.expectedCategory });
+        requestItems.push({ type: 'url', url: item.url, expectedCategory: item.expectedCategory, operatorName: item.operatorName });
       }
     });
 
     formData.append('items', JSON.stringify(requestItems));
 
     try {
-      const response = await fetch('/api/audit-batch', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch('/api/audit-batch', { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Error al iniciar el análisis');
+      const { jobId } = await response.json();
 
-      if (!response.ok) {
-        const text = await response.text();
-        let errorMessage = 'Error en la solicitud.';
-        try {
-          const errorData = JSON.parse(text);
-          errorMessage = errorData.error || errorMessage;
-        } catch (e) {
-          errorMessage = `Error del servidor: ${text.slice(0, 100)}`;
+      // Polling
+      const poll = async () => {
+        const res = await fetch(`/api/job-status/${jobId}`);
+        const data = await res.json();
+        if (data.status === 'processing') {
+          setTimeout(poll, 3000);
+        } else if (data.status === 'completed') {
+          setResults(data.results);
+          setGeneralSummary(data.generalSummary);
+          setLoading(false);
+          setJobId(jobId);
+        } else {
+          throw new Error(data.error || 'Error en el proceso');
         }
-        throw new Error(errorMessage);
-      }
+      };
+      poll();
 
-      const data = await response.json();
-      setResults(data.results);
-      setGeneralSummary(data.generalSummary);
     } catch (err: any) {
       setError(err.message);
-    } finally {
       setLoading(false);
     }
   };
 
+  const [jobId, setJobId] = useState<string | null>(null);
+
   const handleExportExcel = () => {
-    if (!results) return;
-
-    const check = (val: boolean) => val ? '✅ Sí' : '❌ No';
-
-    const data = results.map((result) => {
-      const source = result.item.sourceName || (result.item.type === 'file' ? `Archivo ${result.item.fileIndex}` : result.item.url) || "N/A";
-      const phone = extractPhoneNumber(source);
-      const report = result.report;
-
-      if (!report) {
-         return {
-           "Agente": agentName,
-           "Número de Teléfono": phone,
-           "URL / Archivo": source,
-           "Tipificación del Operador": result.item.expectedCategory,
-           "Tipificación Correcta": "N/A",
-           "Saludo Inicial": "N/A",
-           "Identificación del Cliente": "N/A",
-           "Presentación de la Compañía": "N/A",
-           "Menciona Notificación Previa": "N/A",
-           "Explica el Programa y Beneficios": "N/A",
-           "Manejo de Objeción 'Ya recibí el beneficio'": "N/A",
-           "Resumen de la Llamada": result.error || "Error al procesar"
-         };
-      }
-
-      return {
-        "Agente": agentName,
-        "Número de Teléfono": phone,
-        "URL / Archivo": source,
-        "Tipificación del Operador": result.item.expectedCategory,
-        "Tipificación Correcta": report.actualCategory,
-        "Saludo Inicial": check(report.checklist.saludoInicial),
-        "Identificación del Cliente": check(report.checklist.identificacionCliente),
-        "Presentación de la Compañía": check(report.checklist.presentacionCompania),
-        "Menciona Notificación Previa": check(report.checklist.mencionaNotificacion),
-        "Explica el Programa y Beneficios": check(report.checklist.explicaPrograma),
-        "Manejo de Objeción 'Ya recibí el beneficio'": check(report.checklist.manejoObjecion),
-        "Resumen de la Llamada": report.shortSummary
-      };
-    });
-
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Auditoría");
-    
-    if (generalSummary) {
-       const wsSummary = XLSX.utils.aoa_to_sheet([
-         ["Resumen General de Desempeño"],
-         [generalSummary]
-       ]);
-       wsSummary["!cols"] = [{ wch: 100 }];
-       XLSX.utils.book_append_sheet(wb, wsSummary, "Resumen General");
-    }
-
-    XLSX.writeFile(wb, `Auditoria_${agentName || 'Llamadas'}.xlsx`);
+    if (!jobId) return;
+    window.location.href = `/api/download-report/${jobId}`;
   };
 
   return (
@@ -229,20 +172,9 @@ export default function App() {
               </div>
               
               <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Nombre del Agente / Operador</label>
-                    <input
-                      type="text"
-                      value={agentName}
-                      onChange={(e) => setAgentName(e.target.value)}
-                      placeholder="Ej. Juan Pérez"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="border-t border-gray-200 pt-4">
-                    <h3 className="text-sm font-medium text-gray-700 mb-3">Llamadas a Auditar</h3>
+                  <div className="border-b border-gray-200 pb-4">
+                    <h3 className="text-sm font-medium text-gray-700">Llamadas a Auditar ({items.length}/100)</h3>
                   </div>
 
                   {items.map((item, index) => (
@@ -317,6 +249,18 @@ export default function App() {
                       )}
 
                       <div>
+                        <div className="flex items-center gap-2 border border-gray-300 rounded-lg overflow-hidden bg-white mb-2">
+                          <div className="pl-3 pr-2 text-gray-400">
+                            <Tag className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="text"
+                            value={item.operatorName || ''}
+                            onChange={(e) => updateItem(item.id, { operatorName: e.target.value })}
+                            className="w-full py-2 pr-3 text-sm focus:outline-none"
+                            placeholder="Nombre del Operador"
+                          />
+                        </div>
                         <div className="flex items-center gap-2 border border-gray-300 rounded-lg overflow-hidden bg-white">
                           <div className="pl-3 pr-2 text-gray-400">
                             <Tag className="w-4 h-4" />
@@ -326,7 +270,7 @@ export default function App() {
                             value={item.expectedCategory}
                             onChange={(e) => updateItem(item.id, { expectedCategory: e.target.value })}
                             className="w-full py-2 pr-3 text-sm focus:outline-none"
-                            placeholder="Tipificación del operador (ej. Interesado)"
+                            placeholder="Tipificación del operador"
                           />
                         </div>
                       </div>
@@ -379,7 +323,7 @@ export default function App() {
                 <Loader2 className="w-8 h-8 animate-spin mb-4 text-blue-500" />
                 <p className="text-sm font-medium text-gray-500">Evaluando llamadas...</p>
                 <p className="text-xs mt-2 text-gray-400 max-w-[300px] text-center">
-                  El procesamiento se realiza una llamada a la vez. Si has enviado varias, el sistema esperará 2 minutos antes de procesar la siguiente llamada.
+                  El procesamiento se realiza una llamada a la vez. Si has enviado varias, el sistema esperará 1 minuto antes de procesar la siguiente llamada.
                 </p>
               </div>
             ) : results ? (
@@ -502,7 +446,7 @@ export default function App() {
               <div className="h-full min-h-[500px] flex flex-col items-center justify-center text-gray-400 bg-gray-50 border border-gray-200 rounded-xl border-dashed">
                 <CheckCircle className="w-12 h-12 mb-4 text-gray-300" />
                 <p className="text-sm font-medium text-gray-500">Los informes aparecerán aquí</p>
-                <p className="text-xs mt-1 text-gray-400 max-w-sm text-center">Puedes procesar hasta 10 llamadas a la vez.</p>
+                <p className="text-xs mt-1 text-gray-400 max-w-sm text-center">Puedes procesar hasta 100 llamadas a la vez.</p>
               </div>
             )}
           </div>

@@ -111,13 +111,13 @@ async function startServer() {
       const ai = getAi();
 
       const results: any[] = [];
-      const batchSize = 5;
+      const batchSize = 1;
       
       for (let i = 0; i < items.length; i += batchSize) {
         if (i > 0) {
-          // Wait 60 seconds before processing the next batch to avoid rate limits
-          console.log(`Waiting 60 seconds before processing batch ${Math.floor(i / batchSize) + 1}...`);
-          await new Promise(resolve => setTimeout(resolve, 60000));
+          // Wait 120 seconds before processing the next item to avoid rate limits
+          console.log(`Waiting 120 seconds before processing item ${i + 1}...`);
+          await new Promise(resolve => setTimeout(resolve, 120000));
         }
 
         const batch = items.slice(i, i + batchSize);

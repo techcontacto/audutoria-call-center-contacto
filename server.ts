@@ -65,8 +65,12 @@ async function runBackgroundAnalysis(jobId: string) {
 
       const batch = job.preparedItems.slice(i, i + 5);
       const batchResults = await Promise.all(batch.map(async (item) => {
-        try {
-          const prompt = `Eres un auditor experto en calidad (QA) de call centers.
+        let retries = 10;
+        let delay = 10000; // Start with 10s
+
+        while (retries > 0) {
+          try {
+            const prompt = `Eres un auditor experto en calidad (QA) de call centers.
 1. GUIÓN GENERAL: """${config.script}"""
 2. MANEJO DE OBJECIONES: """${config.objections}"""
 3. TIPIFICACIONES DISPONIBLES: """${config.categories}"""
@@ -82,18 +86,27 @@ Evalúa el desempeño y devuelve JSON:
 }
 Responde SOLO con JSON en español.`;
 
-          const response = await ai.models.generateContent({
-            model: "gemini-3.1-flash-lite",
-            contents: [{ role: "user", parts: [{ inlineData: { mimeType: item.mimeType, data: item.base64Audio } }, { text: prompt }] }],
-            config: { responseMimeType: "application/json", temperature: 0.1, }
-          });
+            const response = await ai.models.generateContent({
+              model: "gemini-3.1-flash-lite",
+              contents: [{ role: "user", parts: [{ inlineData: { mimeType: item.mimeType, data: item.base64Audio } }, { text: prompt }] }],
+              config: { responseMimeType: "application/json", temperature: 0.1, }
+            });
 
-          let reportText = response.text || "{}";
-          reportText = reportText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-          return { success: true, item, report: JSON.parse(reportText) };
-        } catch (err: any) {
-          return { success: false, item, error: err.message };
+            let reportText = response.text || "{}";
+            reportText = reportText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+            return { success: true, item, report: JSON.parse(reportText) };
+          } catch (err: any) {
+            if (err.status === 503 && retries > 1) {
+              console.warn(`Model busy (503), retrying in ${delay}ms...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              retries--;
+              delay *= 2; // Exponential backoff
+            } else {
+              return { success: false, item, error: err.message };
+            }
+          }
         }
+        return { success: false, item, error: "Exceeded retries due to high demand." };
       }));
       results.push(...batchResults);
     }
